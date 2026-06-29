@@ -1,0 +1,71 @@
+import pygame
+import constants
+import math
+from health import Health
+
+
+class Enemy():
+    def __init__(self, x, y, width, height, colour, health, attack, velocity, loot):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.health_rect = Health(
+            self.rect.centerx-15, self.rect.y - 15, 30, 5, health, health)
+        self.colour = colour
+        self.health = health
+        self.attack = attack
+        self.crt_wpt = 0
+        self.vel = velocity
+        self.loot = loot
+        self.vx = 0
+        self.vy = 0
+        self.health_rect.update_health(self.health)
+        self.hit_count = 0
+
+    def movement(self, map):
+        # If we reached the final waypoint, stop
+        if self.crt_wpt >= len(map):
+            self.vx = 0
+            self.vy = 0
+            return
+
+        # Get enemy center
+        ex, ey = self.rect.center
+
+        # Get current waypoint target
+        wx, wy = map[self.crt_wpt]
+
+        # Compute direction vector
+        dx = wx - ex
+        dy = wy - ey
+
+        # Compute distance to waypoint
+        dist = math.hypot(dx, dy)
+
+        # If close enough, move to next waypoint
+        if dist < 5:
+            self.crt_wpt += 1
+            return
+
+        dx /= dist
+        dy /= dist
+
+        self.vx = dx * self.vel
+        self.vy = dy * self.vel
+
+        # Move enemy
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+        self.health_rect.move(self.vx, self.vy)
+
+    def hit(self, damage):
+        self.health -= damage
+        self.health_rect.update_health(self.health)
+
+    def attack_base(self, base, last_frame):
+        self.hit_count += last_frame
+        if self.hit_count > 3000:
+            base.hit(self.attack)
+            self.hit_count = 0
+
+    def draw(self):
+        pygame.draw.rect(constants.WIN, self.colour, self.rect)
+        pygame.draw.rect(constants.WIN, "red", self.health_rect.rect)
