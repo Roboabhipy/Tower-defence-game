@@ -32,26 +32,26 @@ class Map():
 
     def update_neighbours(self, grid):
         self.neighbours = []
-        print(len(grid))
-        print(self.col, self.row)
 
-        # Down
-        if self.row < len(grid) -1 and not grid[self.row + 1][self.col] != "Obstacle":
-            self.neighbours.append(grid[self.row + 1][self.col])
+        if self.row < len(grid) - 1:
+            down = grid[self.row + 1][self.col]
+            if down.type != "Obstacle":
+                self.neighbours.append(down)
 
-        # Up
-        if self.row > len(grid) - 1 and not grid[self.row - 1][self.col] != "Obstacle":
-            self.neighbours.append(grid[self.row - 1][self.col])
+        if self.row > 0:
+            up = grid[self.row - 1][self.col]
+            if up.type != "Obstacle":
+                self.neighbours.append(up)
 
-        # Right
-        if self.col < len(grid) - 1 and not grid[self.row][self.col + 1] != "Obstacle":
-            self.neighbours.append(grid[self.row][self.col + 1])
+        if self.col < len(grid[0]) - 1:
+            right = grid[self.row][self.col + 1]
+            if right.type != "Obstacle":
+                self.neighbours.append(right)
 
-        # Left
-        if self.col > len(grid) - 1 and not grid[self.row][self.col - 1] != "Obstacle":
-            self.neighbours.append(grid[self.row][self.col - 1])
-        
-        # print(len(self.neighbours))
+        if self.col > 0:
+            left = grid[self.row][self.col - 1]
+            if left.type != "Obstacle":
+                self.neighbours.append(left)
     
     def __lt__(self, other):
         return False

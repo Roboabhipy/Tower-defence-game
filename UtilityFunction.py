@@ -5,15 +5,18 @@ from mapcreator import Map
 
 def create_grid(width, rows):
     grid = []
-    gap = width // rows
-    for i in range(rows):
+    path_positions = {
+        (x // constants.GRID_WIDTH, y // constants.GRID_HEIGHT)
+        for x, y in constants.MAP_COR
+    }
+
+    for row in range(rows):
         grid.append([])
-        for j in range(rows):
-            spot = Map(i, j)
-            # If coordinates are in MAP_COR, it is a walkable white pathway
-            if (i, j) in constants.MAP_COR:
+        for col in range(rows):
+            spot = Map(col, row)
+            if (col, row) in path_positions:
                 spot.make_path()
-            grid[i].append(spot)
+            grid[row].append(spot)
     return grid
 
 

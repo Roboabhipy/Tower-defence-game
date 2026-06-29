@@ -16,9 +16,11 @@ def draw_grid():
 
     # Draws grid
     for i in range(constants.WIDTH // constants.GRID_WIDTH):
-        pygame.draw.line(constants.WIN, "white", (i*constants.GRID_WIDTH, 0), (i*constants.GRID_WIDTH, constants.HEIGHT))
+        pygame.draw.line(constants.WIN, "white", (i*constants.GRID_WIDTH,
+                         0), (i*constants.GRID_WIDTH, constants.HEIGHT))
         for j in range(constants.HEIGHT // constants.GRID_HEIGHT):
-            pygame.draw.line(constants.WIN, "white", (0, j*constants.GRID_HEIGHT), (constants.WIDTH, j*constants.GRID_HEIGHT))
+            pygame.draw.line(constants.WIN, "white", (0, j*constants.GRID_HEIGHT),
+                             (constants.WIDTH, j*constants.GRID_HEIGHT))
 
 
 def draw_mouse_rect(mouse_grid_pos):
@@ -88,25 +90,25 @@ def place_block(blocks, turrets, block_selected, placers, map_cor, occupied_grid
             blocks, turrets, mouse_grid_pos, occupied_grid_cor)
         return blocks, turrets, coins
 
-    if mouse_grid_pos in map_cor:
-        return blocks, turrets, coins
+    # if mouse_grid_pos in map_cor:
+    #     return blocks, turrets, coins
 
     if block_selected in placers:
-        turret_type = turret_data[block_selected]
-        if coins >= turret_type["price"]:
-            coins -= turret_type["price"]
-            obj = placers[block_selected](mouse_grid_pos)
+        # turret_type = turret_data[block_selected]
+        # if coins >= turret_type["price"]:
+        #     coins -= turret_type["price"]
+        obj = placers[block_selected](mouse_grid_pos)
 
-            if mouse_grid_pos in occupied_grid_cor:
-                blocks, turrets = remove_block(
-                    blocks, turrets, mouse_grid_pos, occupied_grid_cor)
-            else:
-                occupied_grid_cor.append(mouse_grid_pos)
+        if mouse_grid_pos in occupied_grid_cor:
+            blocks, turrets = remove_block(
+                blocks, turrets, mouse_grid_pos, occupied_grid_cor)
+        else:
+            occupied_grid_cor.append(mouse_grid_pos)
 
-            if isinstance(obj, Turrets):
-                turrets.append(obj)
-            else:
-                blocks.append(obj)
+        if isinstance(obj, Turrets):
+            turrets.append(obj)
+        else:
+            blocks.append(obj)
 
     return blocks, turrets, coins
 
@@ -122,26 +124,30 @@ def remove_block(blocks, turrets, mouse_grid_pos, occupied_grid_cor):
 
     return blocks, turrets
 
-def create_waypoint(map_cor):
+
+def create_waypoint(map_cor, end_target=None):
     start_coords = constants.MAP_COR[0]
-    # print(start_coords)
-    start_coords = (start_coords[0] // constants.GRID_WIDTH, start_coords[1] // constants.GRID_HEIGHT)
+    start_coords = (start_coords[0] // constants.GRID_WIDTH,
+                    start_coords[1] // constants.GRID_HEIGHT)
     end_coords = constants.MAP_COR[-1]
-    end_coords = (end_coords[0] // constants.GRID_WIDTH, end_coords[1] // constants.GRID_HEIGHT)
-    start = map_cor[start_coords[0]][start_coords[1]]
-    end = map_cor[end_coords[0]][end_coords[1]]
+    end_coords = (end_coords[0] // constants.GRID_WIDTH,
+                  end_coords[1] // constants.GRID_HEIGHT)
+    start = map_cor[start_coords[1]][start_coords[0]]
+    end = map_cor[end_coords[1]][end_coords[0]]
     start.make_start()
-    end.make_start()
+    end.make_end()
 
     waypoints = pathfinder.algorithm(map_cor, start, end)
+    if waypoints is not None and end_target is not None:
+        waypoints.append(end_target)
 
     return waypoints
 
 
-def draw(turrets, blocks, enemies, map, buttons, mouse_grid_pos, grids, coins):
+def draw(turrets, blocks, enemies, map, buttons, mouse_grid_pos, coins):
     constants.WIN.fill("dark green")
     draw_mouse_rect(mouse_grid_pos)
-    draw_grid(grids)
+    draw_grid()
     for cor in map:
         pygame.draw.rect(constants.WIN, "brown", (cor[0], cor[1], 50, 50))
 
@@ -207,14 +213,11 @@ def main():
     coins = 100
     enemy_spawn_count = 3000
 
-    map = create_grid(constants.GRID_WIDTH, constants.WIDTH // constants.GRID_WIDTH)
-    # print(map)
+    map = create_grid(constants.GRID_WIDTH,
+                      constants.WIDTH // constants.GRID_WIDTH)
 
-    # waypoint = [(100, 200), (100, 250), (100, 300), (100, 350), (100, 400), (150, 400), (200, 400), (250, 400), (250, 350), (250, 300), (300, 300), (350, 300), (350, 250), (350, 200), (350, 150), (350, 100), (400, 100), (450, 100), (500, 100), (550, 100), (550, 150), (550, 200), (550, 250), (550, 300),
-    #             (550, 350), (600, 350), (650, 350), (700, 350), (750, 350), (800, 350), (800, 400), (800, 450), (800, 500), (800, 550), (750, 550), (700, 550), (650, 550), (600, 550), (600, 600), (600, 650), (600, 700), (650, 700), (700, 700), (750, 700), (800, 700), (850, 700), (900, 700), (950, 700), (1000, 700)]
-
-    waypoint = create_waypoint(map)
-    # print(waypoint)
+    waypoint = create_waypoint(
+        map, (home_base.rect.centerx - constants.GRID_WIDTH, home_base.rect.centery))
 
     while run:
         last_frame = clock.tick(constants.FPS)
@@ -243,13 +246,16 @@ def main():
             enemies, waypoint, turrets, home_base, enemy_count, enemy_types, enemy_base, coins, enemy_spawn_count)
 
         button_loop(buttons, mouse_pos)
-
         draw(turrets, blocks, enemies, constants.MAP_COR,
              buttons, mouse_grid_pos, coins)
 
         home_base.draw()
         enemy_base.draw()
+        for i in range(len(waypoint) - 1):
+            pygame.draw.line(constants.WIN, "white",
+                             waypoint[i], waypoint[i + 1], 3)
         pygame.display.update()
+    print(occupied_grid_cor)
     pygame.quit()
 
 

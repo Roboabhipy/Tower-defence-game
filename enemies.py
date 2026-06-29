@@ -40,9 +40,15 @@ class Enemy():
         # Compute distance to waypoint
         dist = math.hypot(dx, dy)
 
-        # If close enough, move to next waypoint
-        if dist < 5:
+        # If close enough, snap to the waypoint and move to the next one
+        if dist <= max(2, self.vel / 2):
+            self.rect.centerx = wx
+            self.rect.centery = wy
+            self.health_rect.rect.x = self.rect.centerx - 15
+            self.health_rect.rect.y = self.rect.y - 15
             self.crt_wpt += 1
+            self.vx = 0
+            self.vy = 0
             return
 
         dx /= dist
@@ -51,9 +57,9 @@ class Enemy():
         self.vx = dx * self.vel
         self.vy = dy * self.vel
 
-        # Move enemy
-        self.rect.x += self.vx
-        self.rect.y += self.vy
+        # Move enemy so the center of the rectangle follows the waypoint path
+        self.rect.centerx += self.vx
+        self.rect.centery += self.vy
         self.health_rect.move(self.vx, self.vy)
 
     def hit(self, damage):
