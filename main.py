@@ -196,8 +196,8 @@ def main():
         3: lambda pos: Enemy(pos[0], pos[1], **enemy_data[3])
     }
 
-    home_base = Base(1000, 650, 100, 100, "blue", 300)
-    enemy_base = Base(50, 50, 100, 100, "red", 300)
+    home_base = Base(1000, 650, 50, 50, "blue", 300)
+    enemy_base = Base(50, 100, 50, 50, "red", 300)
 
     buttons = [
         Buttons(constants.WIDTH - 100, 20, 75, 50, 1, "Green", "grey"),
@@ -217,7 +217,7 @@ def main():
                       constants.WIDTH // constants.GRID_WIDTH)
 
     waypoint = create_waypoint(
-        map, (home_base.rect.centerx - constants.GRID_WIDTH, home_base.rect.centery))
+        map, (home_base.rect.x, home_base.rect.centery))
 
     while run:
         last_frame = clock.tick(constants.FPS)
@@ -251,11 +251,10 @@ def main():
 
         home_base.draw()
         enemy_base.draw()
-        for i in range(len(waypoint) - 1):
-            pygame.draw.line(constants.WIN, "white",
-                             waypoint[i], waypoint[i + 1], 3)
+        # for i in range(len(waypoint) - 1):
+        #     pygame.draw.line(constants.WIN, "white",
+        #                      waypoint[i], waypoint[i + 1], 3)
         pygame.display.update()
-    print(occupied_grid_cor)
     pygame.quit()
 
 
