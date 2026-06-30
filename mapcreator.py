@@ -3,12 +3,15 @@ import pygame
 
 
 class Map():
-    def __init__(self, col, row):
+    def __init__(self, col, row, colour, type="Obstacle"):
         self.row = row
         self.col = col
         self.x = col * constants.GRID_WIDTH  # Column
         self.y = row * constants.GRID_HEIGHT  # Row
-        self.type = "Obstacle"
+        self.rect = pygame.Rect(
+            self.x, self.y, constants.GRID_WIDTH, constants.GRID_HEIGHT)
+        self.colour = colour
+        self.type = type
         self.path = "Open"  # Says if the shortest path exists using this path block
         self.neighbours = []  # All path blocks in 4 directions not diagonal
 
@@ -17,10 +20,10 @@ class Map():
 
     def make_obstacle(self):
         self.type = "Obstacle"
-    
+
     def make_start(self):
         self.type = "Start"
-    
+
     def make_end(self):
         self.type = "End"
 
@@ -52,6 +55,9 @@ class Map():
             left = grid[self.row][self.col - 1]
             if left.type != "Obstacle":
                 self.neighbours.append(left)
-    
+
     def __lt__(self, other):
         return False
+
+    def draw(self):
+        pygame.draw.rect(constants.WIN, self.colour, self.rect)

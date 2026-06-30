@@ -13,7 +13,7 @@ def create_grid(rows):
     for row in range(rows):
         grid.append([])
         for col in range(rows):
-            spot = Map(col, row)
+            spot = Map(col, row, "brown", "Path")
             if (col, row) in path_positions:
                 spot.make_path()
             grid[row].append(spot)

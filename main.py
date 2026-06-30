@@ -1,13 +1,14 @@
 import pygame
 import constants
 import pathfinder
-from blocks import Blocks
-from turrets import Turrets
+
 from base import Base
 from buttons import Buttons
+
 from UtilityFunction import create_grid
-from turret_types import turret_data
+
 from enemymanager import EnemyManager
+from mapmanager import MapManager
 
 
 def draw_grid():
@@ -47,47 +48,47 @@ def button_loop(buttons, mouse_pos):
         button.mouse_detection(mouse_pos)
 
 
-def place_block(blocks, turrets, block_selected, placers, map_cor, occupied_grid_cor, mouse_grid_pos, coins):
-    # Deletes objects
-    if block_selected == 4 and mouse_grid_pos in occupied_grid_cor:
-        coins += 25
-        blocks, turrets = remove_block(
-            blocks, turrets, mouse_grid_pos, occupied_grid_cor)
-        return blocks, turrets, coins
+# def place_block(blocks, turrets, block_selected, placers, map_cor, occupied_grid_cor, mouse_grid_pos, coins):
+#     # Deletes objects
+#     if block_selected == 4 and mouse_grid_pos in occupied_grid_cor:
+#         coins += 25
+#         blocks, turrets = remove_block(
+#             blocks, turrets, mouse_grid_pos, occupied_grid_cor)
+#         return blocks, turrets, coins
 
-    # if mouse_grid_pos in map_cor:
-    #     return blocks, turrets, coins
+#     # if mouse_grid_pos in map_cor:
+#     #     return blocks, turrets, coins
 
-    if block_selected in placers:
-        # turret_type = turret_data[block_selected]
-        # if coins >= turret_type["price"]:
-        #     coins -= turret_type["price"]
-        obj = placers[block_selected](mouse_grid_pos)
+#     if block_selected in placers:
+#         # turret_type = turret_data[block_selected]
+#         # if coins >= turret_type["price"]:
+#         #     coins -= turret_type["price"]
+#         obj = placers[block_selected](mouse_grid_pos)
 
-        if mouse_grid_pos in occupied_grid_cor:
-            blocks, turrets = remove_block(
-                blocks, turrets, mouse_grid_pos, occupied_grid_cor)
-        else:
-            occupied_grid_cor.append(mouse_grid_pos)
+#         if mouse_grid_pos in occupied_grid_cor:
+#             blocks, turrets = remove_block(
+#                 blocks, turrets, mouse_grid_pos, occupied_grid_cor)
+#         else:
+#             occupied_grid_cor.append(mouse_grid_pos)
 
-        if isinstance(obj, Turrets):
-            turrets.append(obj)
-        else:
-            blocks.append(obj)
+#         if isinstance(obj, Turrets):
+#             turrets.append(obj)
+#         else:
+#             blocks.append(obj)
 
-    return blocks, turrets, coins
+#     return blocks, turrets, coins
 
 
-def remove_block(blocks, turrets, mouse_grid_pos, occupied_grid_cor):
-    for cor in occupied_grid_cor[:]:
-        if cor[0] == mouse_grid_pos[0] and cor[1] == mouse_grid_pos[1]:
-            occupied_grid_cor.remove(cor)
-            blocks[:] = [b for b in blocks if (
-                b.rect.x, b.rect.y) != mouse_grid_pos]
-            turrets[:] = [t for t in turrets if (
-                t.rect.x, t.rect.y) != mouse_grid_pos]
+# def remove_block(blocks, turrets, mouse_grid_pos, occupied_grid_cor):
+#     for cor in occupied_grid_cor[:]:
+#         if cor[0] == mouse_grid_pos[0] and cor[1] == mouse_grid_pos[1]:
+#             occupied_grid_cor.remove(cor)
+#             blocks[:] = [b for b in blocks if (
+#                 b.rect.x, b.rect.y) != mouse_grid_pos]
+#             turrets[:] = [t for t in turrets if (
+#                 t.rect.x, t.rect.y) != mouse_grid_pos]
 
-    return blocks, turrets
+#     return blocks, turrets
 
 
 def create_waypoint(map_cor, end_target=None):
@@ -109,18 +110,12 @@ def create_waypoint(map_cor, end_target=None):
     return waypoints
 
 
-def draw(turrets, blocks, enemies, map, buttons, mouse_grid_pos, coins):
+def draw(mapmanager, enemies, buttons, mouse_grid_pos, coins):
     constants.WIN.fill("dark green")
     draw_mouse_rect(mouse_grid_pos)
     draw_grid()
-    for cor in map:
-        pygame.draw.rect(constants.WIN, "brown", (cor[0], cor[1], 50, 50))
 
-    for turret in turrets:
-        turret.draw(enemies)
-
-    for block in blocks:
-        block.draw()
+    mapmanager.draw()
 
     enemies.draw()
 
@@ -137,30 +132,14 @@ def main():
 
     home_base = Base(1000, 650, 50, 50, "blue", 300)
     enemy_base = Base(50, 100, 50, 50, "red", 300)
-
-    map = create_grid(constants.WIDTH // constants.GRID_WIDTH)
-
+    mapmanager = MapManager()
     waypoint = create_waypoint(
-        map, (home_base.rect.x, home_base.rect.centery))
+        mapmanager.occupied_grids, (home_base.rect.x, home_base.rect.centery))
 
-    turrets = []
-    blocks = []
     enemies = EnemyManager(enemy_base, home_base, waypoint)
     coins = 100
 
-    occupied_grid_cor = []
-
     block_selected = 0
-
-    placers = {
-        1: lambda pos: Blocks(pos[0], pos[1], constants.GRID_WIDTH, constants.GRID_HEIGHT, "green"),
-        2: lambda pos: Blocks(pos[0], pos[1], constants.GRID_WIDTH, constants.GRID_HEIGHT, "brown"),
-        3: lambda pos: Blocks(pos[0], pos[1], constants.GRID_WIDTH, constants.GRID_HEIGHT, "red"),
-        5: lambda pos: Turrets(pos[0], pos[1], **turret_data[5]),
-        6: lambda pos: Turrets(pos[0], pos[1], **turret_data[6]),
-        7: lambda pos: Turrets(pos[0], pos[1], **turret_data[7]),
-        8: lambda pos: Turrets(pos[0], pos[1], **turret_data[8])
-    }
 
     buttons = [
         Buttons(constants.WIDTH - 100, 20, 75, 50, 1, "Green", "grey"),
@@ -184,21 +163,27 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 clicked_button = False
+
                 for button in buttons:
                     if button.rect.collidepoint(mouse_pos):
                         clicked_button = True
                         block_selected = button.get_function()
                         break
+
                 if not clicked_button:
-                    blocks, turrets, coins = place_block(
-                        blocks, turrets, block_selected, placers, constants.MAP_COR, occupied_grid_cor, mouse_grid_pos, coins)
+                    if block_selected == 4:
+                        coins += mapmanager.delete_obj(mouse_grid_pos)
 
-        turret_loop(turrets, last_frame, enemies)
+                    else:
+                        coins -= mapmanager.place_block(
+                            block_selected, mouse_grid_pos, coins)
 
-        coins += enemies.update(last_frame, turrets)
+        turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
+
+        coins += enemies.update(last_frame, mapmanager.turrets)
 
         button_loop(buttons, mouse_pos)
-        draw(turrets, blocks, enemies, constants.MAP_COR,
+        draw(mapmanager, enemies,
              buttons, mouse_grid_pos, coins)
 
         home_base.draw()
