@@ -1,15 +1,13 @@
 import pygame
-import random
 import constants
 import pathfinder
 from blocks import Blocks
 from turrets import Turrets
-from enemies import Enemy
 from base import Base
 from buttons import Buttons
 from UtilityFunction import create_grid
 from turret_types import turret_data
-from enemy_types import enemy_data
+from enemymanager import EnemyManager
 
 
 def draw_grid():
@@ -37,39 +35,6 @@ def get_mouse_grid_pos(mouse_pos):
     mouse_grid_y = (
         mouse_pos[1] // constants.GRID_HEIGHT)*constants.GRID_HEIGHT
     return mouse_grid_x, mouse_grid_y
-
-
-def enemy_loop(enemies, waypoint, turrets, home_base, enemy_count, enemy_types, enemy_base, coins, enemy_sp_count):
-    enemy_spawn_count = enemy_sp_count
-    for enemy in enemies[:]:
-        enemy.movement(waypoint)
-        if enemy.rect.colliderect(home_base.rect):
-            enemy.attack_base(home_base, enemy_count)
-
-        for turret in turrets:
-            for bullet in turret.bullets[:]:
-                if bullet.rect.colliderect(enemy.rect):
-                    enemy.hit(turret.attack)
-                    turret.bullets.remove(bullet)
-
-        if enemy.health <= 0:
-            coins += enemy.loot
-            enemies.remove(enemy)
-
-    if enemy_count >= enemy_spawn_count:
-        type_enemy = random.randint(1, 20)
-        if type_enemy in enemy_types:
-            enemy_obj = enemy_obj = enemy_types[type_enemy](
-                enemy_base.rect.center)
-        else:
-            enemy_obj = enemy_types[1](
-                enemy_base.rect.center)
-        enemies.append(enemy_obj)
-        enemy_spawn_count -= 10
-        enemy_spawn_count = max(400, enemy_spawn_count)
-        enemy_count = 0
-
-    return enemies, enemy_count, coins, enemy_spawn_count
 
 
 def turret_loop(turrets, last_frame, enemies):
@@ -157,8 +122,7 @@ def draw(turrets, blocks, enemies, map, buttons, mouse_grid_pos, coins):
     for block in blocks:
         block.draw()
 
-    for enemy in enemies:
-        enemy.draw()
+    enemies.draw()
 
     for button in buttons:
         button.draw()
@@ -171,10 +135,18 @@ def main():
     clock = pygame.time.Clock()
     run = True
 
+    home_base = Base(1000, 650, 50, 50, "blue", 300)
+    enemy_base = Base(50, 100, 50, 50, "red", 300)
+
+    map = create_grid(constants.WIDTH // constants.GRID_WIDTH)
+
+    waypoint = create_waypoint(
+        map, (home_base.rect.x, home_base.rect.centery))
+
     turrets = []
     blocks = []
-    enemies = []
-    enemy_count = 0
+    enemies = EnemyManager(enemy_base, home_base, waypoint)
+    coins = 100
 
     occupied_grid_cor = []
 
@@ -190,15 +162,6 @@ def main():
         8: lambda pos: Turrets(pos[0], pos[1], **turret_data[8])
     }
 
-    enemy_types = {
-        1: lambda pos: Enemy(pos[0], pos[1], **enemy_data[1]),
-        2: lambda pos: Enemy(pos[0], pos[1], **enemy_data[2]),
-        3: lambda pos: Enemy(pos[0], pos[1], **enemy_data[3])
-    }
-
-    home_base = Base(1000, 650, 50, 50, "blue", 300)
-    enemy_base = Base(50, 100, 50, 50, "red", 300)
-
     buttons = [
         Buttons(constants.WIDTH - 100, 20, 75, 50, 1, "Green", "grey"),
         Buttons(constants.WIDTH - 100, 100, 75, 50, 2, "Path", "grey"),
@@ -210,20 +173,10 @@ def main():
         Buttons(constants.WIDTH - 100, 580, 75, 50, 8, "Sniper", "grey"),
     ]
 
-    coins = 100
-    enemy_spawn_count = 3000
-
-    map = create_grid(constants.GRID_WIDTH,
-                      constants.WIDTH // constants.GRID_WIDTH)
-
-    waypoint = create_waypoint(
-        map, (home_base.rect.x, home_base.rect.centery))
-
     while run:
         last_frame = clock.tick(constants.FPS)
         mouse_pos = pygame.mouse.get_pos()
         mouse_grid_pos = get_mouse_grid_pos(mouse_pos)
-        enemy_count += last_frame
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -242,8 +195,7 @@ def main():
 
         turret_loop(turrets, last_frame, enemies)
 
-        enemies, enemy_count, coins, enemy_spawn_count = enemy_loop(
-            enemies, waypoint, turrets, home_base, enemy_count, enemy_types, enemy_base, coins, enemy_spawn_count)
+        coins += enemies.update(last_frame, turrets)
 
         button_loop(buttons, mouse_pos)
         draw(turrets, blocks, enemies, constants.MAP_COR,

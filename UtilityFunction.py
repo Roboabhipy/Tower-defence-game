@@ -3,7 +3,7 @@ import constants
 from mapcreator import Map
 
 
-def create_grid(width, rows):
+def create_grid(rows):
     grid = []
     path_positions = {
         (x // constants.GRID_WIDTH, y // constants.GRID_HEIGHT)
