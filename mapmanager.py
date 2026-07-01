@@ -7,8 +7,8 @@ from UtilityFunction import create_grid
 
 class MapManager:
     def __init__(self):
-        self.occupied_grids = [create_grid(
-            constants.WIDTH // constants.GRID_WIDTH)]
+        self.occupied_grids = create_grid(
+            constants.WIDTH // constants.GRID_WIDTH)
         self.blocks = []
         self.turrets = []
 
@@ -25,11 +25,13 @@ class MapManager:
                                }
 
     def place_block(self, block_selected, mouse_pos, coins):
+        clicked_column = mouse_pos[0] // constants.GRID_WIDTH
+        clicked_row = mouse_pos[1] // constants.GRID_HEIGHT
         spent_coins = 0
         if block_selected in self.block_placers:
             obj = self.block_placers[block_selected](mouse_pos)
-            self.delete_obj(mouse_pos)
-            self.occupied_grids.append(obj)
+            # self.delete_obj(mouse_pos)
+            self.occupied_grids[clicked_row][clicked_column] = obj
 
         elif block_selected in self.turret_placers:
             turret_price = turret_data[block_selected]["price"]
@@ -38,6 +40,8 @@ class MapManager:
                 obj = self.turret_placers[block_selected](mouse_pos)
                 self.delete_obj(mouse_pos)
                 self.turrets.append(obj)
+                self.occupied_grids[clicked_row][clicked_column] = Map(
+                    clicked_column, clicked_row, "dark green")
 
         return spent_coins
 
@@ -49,13 +53,19 @@ class MapManager:
                 self.turrets.remove(turret)
                 break
 
-        for block in self.occupied_grids[:]:
-            if (block.rect.x, block.rect.y) == mouse_pos:
-                self.turrets.remove(turret)
-                break
+        for obj in self.occupied_grids[:]:
+            for block in obj:
+                if (block.rect.x, block.rect.y) == mouse_pos:
+                    block.type = "Obstacle"
+                    block.colour = "dark green"
+                    break
 
         return coins_earned
 
-    def draw(self):
-        for obj in self.occupied_grids:
-            obj.draw()
+    def draw(self, enemies):
+        for list in self.occupied_grids:
+            for obj in list:
+                obj.draw()
+
+        for turret in self.turrets:
+            turret.draw(enemies)

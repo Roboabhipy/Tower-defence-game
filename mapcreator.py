@@ -17,6 +17,7 @@ class Map():
 
     def make_path(self):
         self.type = "Path"
+        self.colour = "brown"
 
     def make_obstacle(self):
         self.type = "Obstacle"

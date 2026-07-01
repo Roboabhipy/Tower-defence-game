@@ -48,49 +48,6 @@ def button_loop(buttons, mouse_pos):
         button.mouse_detection(mouse_pos)
 
 
-# def place_block(blocks, turrets, block_selected, placers, map_cor, occupied_grid_cor, mouse_grid_pos, coins):
-#     # Deletes objects
-#     if block_selected == 4 and mouse_grid_pos in occupied_grid_cor:
-#         coins += 25
-#         blocks, turrets = remove_block(
-#             blocks, turrets, mouse_grid_pos, occupied_grid_cor)
-#         return blocks, turrets, coins
-
-#     # if mouse_grid_pos in map_cor:
-#     #     return blocks, turrets, coins
-
-#     if block_selected in placers:
-#         # turret_type = turret_data[block_selected]
-#         # if coins >= turret_type["price"]:
-#         #     coins -= turret_type["price"]
-#         obj = placers[block_selected](mouse_grid_pos)
-
-#         if mouse_grid_pos in occupied_grid_cor:
-#             blocks, turrets = remove_block(
-#                 blocks, turrets, mouse_grid_pos, occupied_grid_cor)
-#         else:
-#             occupied_grid_cor.append(mouse_grid_pos)
-
-#         if isinstance(obj, Turrets):
-#             turrets.append(obj)
-#         else:
-#             blocks.append(obj)
-
-#     return blocks, turrets, coins
-
-
-# def remove_block(blocks, turrets, mouse_grid_pos, occupied_grid_cor):
-#     for cor in occupied_grid_cor[:]:
-#         if cor[0] == mouse_grid_pos[0] and cor[1] == mouse_grid_pos[1]:
-#             occupied_grid_cor.remove(cor)
-#             blocks[:] = [b for b in blocks if (
-#                 b.rect.x, b.rect.y) != mouse_grid_pos]
-#             turrets[:] = [t for t in turrets if (
-#                 t.rect.x, t.rect.y) != mouse_grid_pos]
-
-#     return blocks, turrets
-
-
 def create_waypoint(map_cor, end_target=None):
     start_coords = constants.MAP_COR[0]
     start_coords = (start_coords[0] // constants.GRID_WIDTH,
@@ -111,11 +68,11 @@ def create_waypoint(map_cor, end_target=None):
 
 
 def draw(mapmanager, enemies, buttons, mouse_grid_pos, coins):
-    constants.WIN.fill("dark green")
-    draw_mouse_rect(mouse_grid_pos)
-    draw_grid()
+    constants.WIN.fill("black")
+    mapmanager.draw(enemies.enemies)
 
-    mapmanager.draw()
+    draw_grid()
+    draw_mouse_rect(mouse_grid_pos)
 
     enemies.draw()
 

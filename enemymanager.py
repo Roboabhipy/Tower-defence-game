@@ -38,10 +38,10 @@ class EnemyManager():
                 enemy.movement(self.waypoints)
 
             for turret in turrets:
-                for bullet in turret.bullet[:]:
+                for bullet in turret.bullets[:]:
                     if bullet.rect.colliderect(enemy.rect):
                         enemy.hit(turret.attack)
-                        turret.bullet.remove(bullet)
+                        turret.bullets.remove(bullet)
 
             if enemy.health <= 0:
                 coins_earned += enemy.loot
