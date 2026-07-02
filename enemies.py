@@ -68,7 +68,7 @@ class Enemy():
 
     def attack_base(self, base, last_frame):
         self.hit_count += last_frame
-        if self.hit_count > 3000:
+        if self.hit_count > 500:
             base.hit(self.attack)
             self.hit_count = 0
 
