@@ -17,9 +17,9 @@ class EnemyManager():
         self.enemy_spawn_delay = 3000
 
         self.enemy_types = {
-            1: lambda pos: Enemy(pos[0], pos[1], **enemy_data[1]),
-            2: lambda pos: Enemy(pos[0], pos[1], **enemy_data[2]),
-            3: lambda pos: Enemy(pos[0], pos[1], **enemy_data[3])
+            1: lambda pos: Enemy(pos[0], pos[1], self.waypoints, **enemy_data[1]),
+            2: lambda pos: Enemy(pos[0], pos[1], self.waypoints, **enemy_data[2]),
+            3: lambda pos: Enemy(pos[0], pos[1], self.waypoints, **enemy_data[3])
         }
 
     def update(self, last_frame, turrets):
@@ -32,7 +32,7 @@ class EnemyManager():
             self.enemy_spawn_delay = max(400, self.enemy_spawn_delay - 10)
 
         for enemy in self.enemies[:]:
-            enemy.movement(self.waypoints)
+            enemy.movement()
             if enemy.rect.colliderect(self.home_base.rect):
                 enemy.attack_base(self.home_base, last_frame)
 
@@ -58,6 +58,9 @@ class EnemyManager():
             enemy_obj = self.enemy_types[1](
                 self.enemy_base.rect.center)
         self.enemies.append(enemy_obj)
+
+    def update_waypoints(self, waypoints):
+        self.waypoints = waypoints
 
     def draw(self):
         for enemy in self.enemies:

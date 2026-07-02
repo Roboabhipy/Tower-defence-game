@@ -48,25 +48,6 @@ def button_loop(buttons, mouse_pos):
         button.mouse_detection(mouse_pos)
 
 
-def create_waypoint(map_cor, end_target=None):
-    start_coords = constants.MAP_COR[0]
-    start_coords = (start_coords[0] // constants.GRID_WIDTH,
-                    start_coords[1] // constants.GRID_HEIGHT)
-    end_coords = constants.MAP_COR[-1]
-    end_coords = (end_coords[0] // constants.GRID_WIDTH,
-                  end_coords[1] // constants.GRID_HEIGHT)
-    start = map_cor[start_coords[1]][start_coords[0]]
-    end = map_cor[end_coords[1]][end_coords[0]]
-    start.make_start()
-    end.make_end()
-
-    waypoints = pathfinder.algorithm(map_cor, start, end)
-    if waypoints is not None and end_target is not None:
-        waypoints.append(end_target)
-
-    return waypoints
-
-
 def draw(mapmanager, enemies, buttons, mouse_grid_pos, coins):
     constants.WIN.fill("black")
     mapmanager.draw(enemies.enemies)
@@ -90,7 +71,7 @@ def main():
     home_base = Base(1000, 650, 50, 50, "blue", 300)
     enemy_base = Base(50, 100, 50, 50, "red", 300)
     mapmanager = MapManager()
-    waypoint = create_waypoint(
+    waypoint = mapmanager.create_waypoint(
         mapmanager.occupied_grids, (home_base.rect.x, home_base.rect.centery))
 
     enemies = EnemyManager(enemy_base, home_base, waypoint)
@@ -132,8 +113,13 @@ def main():
                         coins += mapmanager.delete_obj(mouse_grid_pos)
 
                     else:
-                        coins -= mapmanager.place_block(
+                        spent_coins, waypoints = mapmanager.place_block(
                             block_selected, mouse_grid_pos, coins)
+
+                        coins -= spent_coins
+
+                        if waypoints:
+                            enemies.update_waypoints(waypoints)
 
         turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
 
