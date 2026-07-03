@@ -1,11 +1,7 @@
 import pygame
 import constants
-import pathfinder
 
-from base import Base
 from buttons import Buttons
-
-from UtilityFunction import create_grid
 
 from enemymanager import EnemyManager
 from mapmanager import MapManager
@@ -68,14 +64,12 @@ def main():
     clock = pygame.time.Clock()
     run = True
 
-    home_base = Base(1000, 650, 50, 50, "blue", 300)
-    enemy_base = Base(50, 100, 50, 50, "red", 300)
     mapmanager = MapManager()
     waypoint = mapmanager.create_waypoint(
-        mapmanager.occupied_grids, (home_base.rect.x, home_base.rect.centery))
+        mapmanager.enemy_base.rect.center, None, (mapmanager.home_base.rect.x, mapmanager.home_base.rect.centery))
 
-    enemies = EnemyManager(enemy_base, home_base, waypoint)
-    coins = 100
+    enemies = EnemyManager(mapmanager.enemy_base, mapmanager.home_base, waypoint)
+    coins = 1000
 
     block_selected = 0
 
@@ -119,7 +113,8 @@ def main():
                         coins -= spent_coins
 
                         if waypoints:
-                            enemies.update_waypoints(waypoints)
+                            waypoint_gen = lambda start, end=None: mapmanager.create_waypoint(start, map_cor=None, end_target=None)
+                            enemies.update_waypoints(waypoints, waypoint_gen)
 
         turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
 
@@ -129,8 +124,6 @@ def main():
         draw(mapmanager, enemies,
              buttons, mouse_grid_pos, coins)
 
-        home_base.draw()
-        enemy_base.draw()
         # for i in range(len(waypoint) - 1):
         #     pygame.draw.line(constants.WIN, "white",
         #                      waypoint[i], waypoint[i + 1], 3)

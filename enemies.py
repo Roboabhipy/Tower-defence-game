@@ -73,6 +73,10 @@ class Enemy():
             base.hit(self.attack)
             self.hit_count = 0
 
+    def update_waypoints(self, waypoints):
+        self.crt_wpt = 0
+        self.waypoints = waypoints(self.rect.center)
+
     def draw(self):
         pygame.draw.rect(constants.WIN, self.colour, self.rect)
         pygame.draw.rect(constants.WIN, "red", self.health_rect.rect)

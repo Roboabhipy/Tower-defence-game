@@ -59,9 +59,14 @@ class EnemyManager():
                 self.enemy_base.rect.center)
         self.enemies.append(enemy_obj)
 
-    def update_waypoints(self, waypoints):
+    def update_waypoints(self, waypoints, waypoint_gen):
         self.waypoints = waypoints
+        for enemy in self.enemies:
+            enemy.update_waypoints(waypoint_gen)
 
     def draw(self):
         for enemy in self.enemies:
             enemy.draw()
+        
+        self.home_base.draw()
+        self.enemy_base.draw()
