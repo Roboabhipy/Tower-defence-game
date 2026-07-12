@@ -74,7 +74,7 @@ class Enemy():
             self.hit_count = 0
 
     def update_waypoints(self, waypoints):
-        self.crt_wpt = 0
+        self.crt_wpt = 1
         self.waypoints = waypoints(self.rect.center)
 
     def draw(self):

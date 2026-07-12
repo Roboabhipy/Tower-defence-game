@@ -37,48 +37,36 @@ class MapManager:
         obj = Map(
             clicked_column, clicked_row, "dark green")
 
-        if block_selected in self.block_placers or block_selected in self.turret_placers:
-            # temp_occupied_grids = [row[:] for row in self.occupied_grids]
-            turret_obj = False
+        if block_selected not in self.block_placers and block_selected not in self.turret_placers:
+            print(False)
+            return spent_coins, False
 
-            if block_selected in self.block_placers:
-                obj = self.block_placers[block_selected](mouse_pos)
+        if block_selected in self.block_placers:
+            obj = self.block_placers[block_selected](mouse_pos)
 
-            elif block_selected in self.turret_placers:
-                turret_price = turret_data[block_selected]["price"]
-                if coins >= turret_price:
-                    turret_obj = self.turret_placers[block_selected](mouse_pos)
-                    obj = Map(
-                        clicked_column, clicked_row, "dark green")
+        elif block_selected in self.turret_placers:
+            turret_price = turret_data[block_selected]["price"]
+            if coins >= turret_price:
+                turret_obj = self.turret_placers[block_selected](mouse_pos)
+                obj = Map(
+                    clicked_column, clicked_row, "dark green")
 
-            new_waypoints = self.is_valid_placement(
-                clicked_row, clicked_column, obj)
+        new_waypoints = self.is_valid_placement(
+            clicked_row, clicked_column, obj)
 
-            if new_waypoints:
-                self.occupied_grids[clicked_row][clicked_column] = obj
-                if turret_obj:
-                    self.replace_obj(mouse_pos)
-                    spent_coins += turret_price
-                    self.turrets.append(turret_obj)
+        if new_waypoints:
+            self.occupied_grids[clicked_row][clicked_column] = obj
+            if turret_obj:
+                self.replace_obj(mouse_pos)
+                spent_coins += turret_price
+                self.turrets.append(turret_obj)
 
-                path_changed = new_waypoints != self.current_waypoints
+            path_changed = new_waypoints != self.current_waypoints
 
-                if path_changed:
-                    self.current_waypoints = new_waypoints
+            if path_changed:
+                self.current_waypoints = new_waypoints
 
-                return spent_coins, path_changed
-
-            # temp_occupied_grids[clicked_row][clicked_column] = obj
-
-            # waypoints = self.create_waypoint(
-            #     self.enemy_base.rect.center, temp_occupied_grids)
-
-            # if waypoints:
-            #     self.occupied_grids[clicked_row][clicked_column] = obj
-            #     if turret_obj:
-            #         spent_coins += turret_price
-            #         self.replace_obj(mouse_pos)
-            #         self.turrets.append(turret_obj)
+            return spent_coins, new_waypoints
 
         return spent_coins, False
 

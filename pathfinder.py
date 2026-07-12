@@ -91,5 +91,5 @@ def algorithm(paths, start, end):
                     open_set.put((f_score[neighbour], count, neighbour))
                     open_set_hash.add(neighbour)
                     neighbour.make_open()
-
+    print(False)
     return False

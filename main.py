@@ -68,7 +68,8 @@ def main():
     waypoint = mapmanager.create_waypoint(
         mapmanager.enemy_base.rect.center, None, (mapmanager.home_base.rect.x, mapmanager.home_base.rect.centery))
 
-    enemies = EnemyManager(mapmanager.enemy_base, mapmanager.home_base, waypoint)
+    enemies = EnemyManager(mapmanager.enemy_base,
+                           mapmanager.home_base, waypoint)
     coins = 1000
 
     block_selected = 0
@@ -113,7 +114,8 @@ def main():
                         coins -= spent_coins
 
                         if waypoints:
-                            waypoint_gen = lambda start, end=None: mapmanager.create_waypoint(start, map_cor=None, end_target=None)
+                            def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
+                                start, map_cor=None, end_target=None)
                             enemies.update_waypoints(waypoints, waypoint_gen)
 
         turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
