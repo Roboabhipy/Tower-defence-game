@@ -1,13 +1,14 @@
 import constants
 import pygame
+import math
 from UtilityFunction import load_sprite_sheets
 
 
 class Player:
-    def __init__(self, x, y, width, height, health, vel, range):
+    def __init__(self, x, y, width, height, health, vel, build_range):
         self.rect = pygame.Rect(x, y, width, height)
         self.vel = vel
-        self.build_range = range
+        self.build_range = build_range
         self.health = health
         self.hit = False
         self.direction = "right"
@@ -51,6 +52,19 @@ class Player:
                         self.animation_delay) % len(sprites)
         self.sprite = sprites[sprite_index]
         self.animation_count += 1
+
+    def check_range(self, pos):
+        x_distance = pos[0] - \
+            ((self.rect.x // constants.GRID_WIDTH)*constants.GRID_WIDTH)
+        y_distance = pos[1] - \
+            ((self.rect.y // constants.GRID_HEIGHT)*constants.GRID_HEIGHT)
+        distance = math.hypot(x_distance, y_distance)
+        distance = (distance // constants.GRID_WIDTH)
+        print(distance)
+        if distance <= self.build_range:
+            return True
+
+        return False
 
     def loop(self, keys):
         self.movement(keys)

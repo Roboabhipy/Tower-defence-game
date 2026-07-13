@@ -72,7 +72,7 @@ def main():
                            mapmanager.home_base, mapmanager.current_waypoints)
 
     main_player = Player(mapmanager.home_base.rect.x,
-                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 5)
+                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 3)
 
     coins = 1000
 
@@ -109,19 +109,22 @@ def main():
                         break
 
                 if not clicked_button:
-                    if block_selected == 4:
-                        coins += mapmanager.delete_obj(mouse_grid_pos)
+                    in_range = main_player.check_range(mouse_grid_pos)
+                    if in_range:
+                        if block_selected == 4:
+                            coins += mapmanager.delete_obj(mouse_grid_pos)
 
-                    else:
-                        spent_coins, waypoints = mapmanager.place_block(
-                            block_selected, mouse_grid_pos, coins)
+                        else:
+                            spent_coins, waypoints = mapmanager.place_block(
+                                block_selected, mouse_grid_pos, coins)
 
-                        coins -= spent_coins
+                            coins -= spent_coins
 
-                        if waypoints:
-                            def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
-                                start, end, map_cor=None)
-                            enemies.update_waypoints(waypoints, waypoint_gen)
+                            if waypoints:
+                                def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
+                                    start, end, map_cor=None)
+                                enemies.update_waypoints(
+                                    waypoints, waypoint_gen)
 
         main_player.loop(keys)
 
