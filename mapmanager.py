@@ -16,7 +16,7 @@ class MapManager:
         self.home_base = Base(1000, 650, 50, 50, "blue", 300)
         self.enemy_base = Base(50, 100, 50, 50, "red", 300)
         self.current_waypoints = self.create_waypoint(
-            self.enemy_base.rect.center)
+            self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
 
         self.block_placers = {
             1: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "green"),
@@ -34,11 +34,11 @@ class MapManager:
         clicked_column = mouse_pos[0] // constants.GRID_WIDTH
         clicked_row = mouse_pos[1] // constants.GRID_HEIGHT
         spent_coins = 0
+        turret_obj = None
         obj = Map(
             clicked_column, clicked_row, "dark green")
 
         if block_selected not in self.block_placers and block_selected not in self.turret_placers:
-            print(False)
             return spent_coins, False
 
         if block_selected in self.block_placers:
@@ -76,7 +76,7 @@ class MapManager:
         temp_occupied_grids[clicked_row][clicked_column] = obj
 
         waypoints = self.create_waypoint(
-            self.enemy_base.rect.center, temp_occupied_grids)
+            self.enemy_base.rect.center, None, temp_occupied_grids)
 
         return waypoints
 
@@ -103,7 +103,7 @@ class MapManager:
                 self.turrets.remove(turret)
                 break
 
-    def create_waypoint(self, start_coords, map_cor=None, end_target=None):
+    def create_waypoint(self, start_coords, end_target=None, map_cor=None):
         if map_cor == None:
             map_cor = self.occupied_grids
         start_coords = (start_coords[0] // constants.GRID_WIDTH,

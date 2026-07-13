@@ -17,9 +17,9 @@ class EnemyManager():
         self.enemy_spawn_delay = 3000
 
         self.enemy_types = {
-            1: lambda pos: Enemy(pos[0], pos[1], self.waypoints, **enemy_data[1]),
-            2: lambda pos: Enemy(pos[0], pos[1], self.waypoints, **enemy_data[2]),
-            3: lambda pos: Enemy(pos[0], pos[1], self.waypoints, **enemy_data[3])
+            1: lambda pos: Enemy(pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[1]),
+            2: lambda pos: Enemy(pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[2]),
+            3: lambda pos: Enemy(pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[3])
         }
 
     def update(self, last_frame, turrets):
@@ -67,6 +67,6 @@ class EnemyManager():
     def draw(self):
         for enemy in self.enemies:
             enemy.draw()
-        
+
         self.home_base.draw()
         self.enemy_base.draw()

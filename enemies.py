@@ -5,7 +5,7 @@ from health import Health
 
 
 class Enemy():
-    def __init__(self, x, y, waypoints, width, height, colour, health, attack, velocity, loot):
+    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, loot, ):
         self.rect = pygame.Rect(x, y, width, height)
         self.health_rect = Health(
             self.rect.centerx-15, self.rect.y - 15, 30, 5, health, health)
@@ -20,6 +20,7 @@ class Enemy():
         self.vy = 0
         self.health_rect.update_health(self.health)
         self.hit_count = 0
+        self.target_base = target_base
 
     def movement(self):
         # If we reached the final waypoint, stop
@@ -75,7 +76,8 @@ class Enemy():
 
     def update_waypoints(self, waypoints):
         self.crt_wpt = 1
-        self.waypoints = waypoints(self.rect.center)
+        self.waypoints = waypoints(
+            self.rect.center, (self.target_base.rect.x, self.target_base.rect.centery))
 
     def draw(self):
         pygame.draw.rect(constants.WIN, self.colour, self.rect)

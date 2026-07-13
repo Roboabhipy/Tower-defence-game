@@ -1,6 +1,68 @@
 import math
 import constants
 from mapcreator import Map
+import pygame
+import os
+
+
+image_cache = {}
+
+
+def load_image(image, width, height, rotate):
+    key = (image, width, height, rotate)
+    if key not in image_cache:
+        loading_image = pygame.image.load(
+            os.path.join('Assets', image + ".png"))
+
+        if rotate != 0:
+            loaded_image = pygame.transform.rotate(
+                pygame.transform.scale(loading_image, (width, height)), rotate)
+        else:
+            loaded_image = pygame.transform.scale(
+                loading_image, (width, height))
+        image_cache[key] = loaded_image
+    return image_cache[key]
+
+
+def load_sprite_sheets(dir1, dir2, width, height, loop_size, direction=False):
+    path = os.path.join(dir1, dir2)
+    images = [f for f in os.listdir(
+        path) if os.path.isfile(os.path.join(path, f))]
+
+    all_sprites = {}
+
+    for image in images:
+        sprite_sheet = pygame.image.load(
+            os.path.join(path, image)).convert_alpha()
+        sheet_width = sprite_sheet.get_width()
+        sheet_height = sprite_sheet.get_height()
+
+        sprites = []
+
+        # Loop rows
+        for y in range(0, sheet_height, loop_size):
+            # Loop columns
+            for x in range(0, sheet_width, loop_size):
+                surface = pygame.Surface(
+                    (loop_size, loop_size), pygame.SRCALPHA)
+
+                rect = pygame.Rect(x, y, loop_size, loop_size)
+                surface.blit(sprite_sheet, (0, 0), rect)
+
+                surface = pygame.transform.scale(surface, (width, height))
+                sprites.append(surface)
+
+        if direction:
+            all_sprites[image.replace(".png", "") + "_right"] = sprites
+            all_sprites[image.replace(".png", "") + "_left"] = flip(sprites)
+        else:
+            all_sprites[image.replace(".png", "")] = sprites
+
+    return all_sprites
+
+
+def flip(sprites):
+    return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
 
 def create_grid(rows):

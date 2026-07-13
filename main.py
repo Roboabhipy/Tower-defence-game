@@ -5,6 +5,7 @@ from buttons import Buttons
 
 from enemymanager import EnemyManager
 from mapmanager import MapManager
+from player import Player
 
 
 def draw_grid():
@@ -44,7 +45,7 @@ def button_loop(buttons, mouse_pos):
         button.mouse_detection(mouse_pos)
 
 
-def draw(mapmanager, enemies, buttons, mouse_grid_pos, coins):
+def draw(mapmanager, player, enemies, buttons, mouse_grid_pos, coins):
     constants.WIN.fill("black")
     mapmanager.draw(enemies.enemies)
 
@@ -53,6 +54,7 @@ def draw(mapmanager, enemies, buttons, mouse_grid_pos, coins):
 
     enemies.draw()
 
+    player.draw()
     for button in buttons:
         button.draw()
 
@@ -65,11 +67,13 @@ def main():
     run = True
 
     mapmanager = MapManager()
-    waypoint = mapmanager.create_waypoint(
-        mapmanager.enemy_base.rect.center, None, (mapmanager.home_base.rect.x, mapmanager.home_base.rect.centery))
 
     enemies = EnemyManager(mapmanager.enemy_base,
-                           mapmanager.home_base, waypoint)
+                           mapmanager.home_base, mapmanager.current_waypoints)
+
+    main_player = Player(mapmanager.home_base.rect.x,
+                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 5)
+
     coins = 1000
 
     block_selected = 0
@@ -88,6 +92,7 @@ def main():
     while run:
         last_frame = clock.tick(constants.FPS)
         mouse_pos = pygame.mouse.get_pos()
+        keys = pygame.key.get_pressed()
         mouse_grid_pos = get_mouse_grid_pos(mouse_pos)
 
         for event in pygame.event.get():
@@ -115,20 +120,19 @@ def main():
 
                         if waypoints:
                             def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
-                                start, map_cor=None, end_target=None)
+                                start, end, map_cor=None)
                             enemies.update_waypoints(waypoints, waypoint_gen)
+
+        main_player.loop(keys)
 
         turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
 
         coins += enemies.update(last_frame, mapmanager.turrets)
 
         button_loop(buttons, mouse_pos)
-        draw(mapmanager, enemies,
+        draw(mapmanager, main_player, enemies,
              buttons, mouse_grid_pos, coins)
 
-        # for i in range(len(waypoint) - 1):
-        #     pygame.draw.line(constants.WIN, "white",
-        #                      waypoint[i], waypoint[i + 1], 3)
         pygame.display.update()
     pygame.quit()
 
