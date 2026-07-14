@@ -1,7 +1,7 @@
 import pygame
-import constants
+import Data.constants as constants
 import math
-from health import Health
+from Components.health import Health
 
 
 class Enemy():

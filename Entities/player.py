@@ -1,7 +1,7 @@
-import constants
+import Data.constants as constants
 import pygame
 import math
-from UtilityFunction import load_sprite_sheets
+from Utils.UtilityFunction import load_sprite_sheets
 
 
 class Player:
@@ -60,7 +60,6 @@ class Player:
             ((self.rect.y // constants.GRID_HEIGHT)*constants.GRID_HEIGHT)
         distance = math.hypot(x_distance, y_distance)
         distance = (distance // constants.GRID_WIDTH)
-        print(distance)
         if distance <= self.build_range:
             return True
 

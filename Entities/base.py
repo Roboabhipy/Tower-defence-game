@@ -1,6 +1,6 @@
 import pygame
-import constants
-from health import Health
+import Data.constants as constants
+from Components.health import Health
 
 
 class Base():

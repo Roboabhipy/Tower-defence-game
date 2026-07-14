@@ -1,7 +1,7 @@
 import random
 
-from enemies import Enemy
-from enemy_types import enemy_data
+from Entities.enemies import Enemy
+from Data.enemy_types import enemy_data
 
 
 class EnemyManager():

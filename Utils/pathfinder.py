@@ -1,5 +1,5 @@
 import pygame
-import constants
+import Data.constants as constants
 from queue import PriorityQueue
 
 # Finds approximate distance between current point and end

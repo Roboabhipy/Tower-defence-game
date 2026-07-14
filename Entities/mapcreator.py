@@ -1,4 +1,4 @@
-import constants
+import Data.constants as constants
 import pygame
 
 

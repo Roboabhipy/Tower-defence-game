@@ -1,11 +1,14 @@
 import pygame
-import constants
+import Data.constants as constants
 
-from buttons import Buttons
+from Managers.enemymanager import EnemyManager
+from Managers.mapmanager import MapManager
+from Entities.player import Player
+from Managers.uimanager import UIManager
 
-from enemymanager import EnemyManager
-from mapmanager import MapManager
-from player import Player
+TRANSPERANT_MOUSE_RECT = pygame.Surface(
+    (constants.GRID_WIDTH, constants.GRID_HEIGHT), pygame.SRCALPHA)
+TRANSPERANT_MOUSE_RECT.fill((255, 255, 255, 75))
 
 
 def draw_grid():
@@ -20,11 +23,8 @@ def draw_grid():
 
 
 def draw_mouse_rect(mouse_grid_pos):
-    transperant_rect = pygame.Surface(
-        (constants.GRID_WIDTH, constants.GRID_HEIGHT), pygame.SRCALPHA)
-    transperant_rect.fill((255, 255, 255, 75))
     constants.WIN.blit(
-        transperant_rect, (mouse_grid_pos[0], mouse_grid_pos[1]))
+        TRANSPERANT_MOUSE_RECT, (mouse_grid_pos[0], mouse_grid_pos[1]))
 
 
 def get_mouse_grid_pos(mouse_pos):
@@ -40,12 +40,12 @@ def turret_loop(turrets, last_frame, enemies):
         turret.loop(enemies, last_frame)
 
 
-def button_loop(buttons, mouse_pos):
-    for button in buttons:
-        button.mouse_detection(mouse_pos)
+# def button_loop(buttons, mouse_pos):
+#     for button in buttons:
+#         button.mouse_detection(mouse_pos)
 
 
-def draw(mapmanager, player, enemies, buttons, mouse_grid_pos, coins):
+def draw(mapmanager, player, enemies, uimanager, mouse_grid_pos, coins):
     constants.WIN.fill("black")
     mapmanager.draw(enemies.enemies)
 
@@ -55,8 +55,8 @@ def draw(mapmanager, player, enemies, buttons, mouse_grid_pos, coins):
     enemies.draw()
 
     player.draw()
-    for button in buttons:
-        button.draw()
+
+    uimanager.draw()
 
     coin_text = constants.FONT.render('Coins: ' + str(coins), True, "white")
     constants.WIN.blit(coin_text, (10, 10))
@@ -71,23 +71,14 @@ def main():
     enemies = EnemyManager(mapmanager.enemy_base,
                            mapmanager.home_base, mapmanager.current_waypoints)
 
+    uimanager = UIManager()
+
     main_player = Player(mapmanager.home_base.rect.x,
-                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 3)
+                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 2)
 
     coins = 1000
 
     block_selected = 0
-
-    buttons = [
-        Buttons(constants.WIDTH - 100, 20, 75, 50, 1, "Green", "grey"),
-        Buttons(constants.WIDTH - 100, 100, 75, 50, 2, "Path", "grey"),
-        Buttons(constants.WIDTH - 100, 180, 75, 50, 3, "Red", "grey"),
-        Buttons(constants.WIDTH - 100, 260, 75, 50, 4, "Delete", "grey"),
-        Buttons(constants.WIDTH - 100, 340, 75, 50, 5, "Tower", "grey"),
-        Buttons(constants.WIDTH - 100, 420, 75, 50, 6, "Rapid", "grey"),
-        Buttons(constants.WIDTH - 100, 500, 75, 50, 7, "Cannon", "grey"),
-        Buttons(constants.WIDTH - 100, 580, 75, 50, 8, "Sniper", "grey"),
-    ]
 
     while run:
         last_frame = clock.tick(constants.FPS)
@@ -100,13 +91,8 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                clicked_button = False
-
-                for button in buttons:
-                    if button.rect.collidepoint(mouse_pos):
-                        clicked_button = True
-                        block_selected = button.get_function()
-                        break
+                block_selected, clicked_button = uimanager.menu["build"].get_function(
+                    mouse_pos)
 
                 if not clicked_button:
                     in_range = main_player.check_range(mouse_grid_pos)
@@ -130,11 +116,11 @@ def main():
 
         turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
 
-        coins += enemies.update(last_frame, mapmanager.turrets)
+        # coins += enemies.update(last_frame, mapmanager.turrets)
 
-        button_loop(buttons, mouse_pos)
+        uimanager.loop(mouse_pos, coins)
         draw(mapmanager, main_player, enemies,
-             buttons, mouse_grid_pos, coins)
+             uimanager, mouse_grid_pos, coins)
 
         pygame.display.update()
     pygame.quit()

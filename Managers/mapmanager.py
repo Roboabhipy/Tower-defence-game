@@ -1,10 +1,10 @@
-import constants
-import pathfinder
-from mapcreator import Map
-from turrets import Turrets
-from turret_types import turret_data
-from UtilityFunction import create_grid
-from base import Base
+import Data.constants as constants
+import Utils.pathfinder as pathfinder
+from Entities.mapcreator import Map
+from Entities.turrets import Turrets
+from Data.turret_types import turret_data
+from Utils.UtilityFunction import create_grid
+from Entities.base import Base
 
 
 class MapManager:
@@ -13,7 +13,7 @@ class MapManager:
             constants.WIDTH // constants.GRID_WIDTH)
         self.blocks = []
         self.turrets = []
-        self.home_base = Base(1000, 650, 50, 50, "blue", 300)
+        self.home_base = Base(950, 650, 50, 50, "blue", 300)
         self.enemy_base = Base(50, 100, 50, 50, "red", 300)
         self.current_waypoints = self.create_waypoint(
             self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
@@ -65,7 +65,6 @@ class MapManager:
 
             if path_changed:
                 self.current_waypoints = new_waypoints
-
             return spent_coins, new_waypoints
 
         return spent_coins, False

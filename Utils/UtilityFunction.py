@@ -1,6 +1,6 @@
 import math
-import constants
-from mapcreator import Map
+import Data.constants as constants
+from Entities.mapcreator import Map
 import pygame
 import os
 

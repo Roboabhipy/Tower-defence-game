@@ -1,5 +1,5 @@
 import pygame
-import constants
+import Data.constants as constants
 
 
 class Health():

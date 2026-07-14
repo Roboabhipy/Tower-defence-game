@@ -1,7 +1,7 @@
 import pygame
 import math
-import UtilityFunction
-import constants
+import Utils.UtilityFunction as UtilityFunction
+import Data.constants as constants
 
 
 class Bullets():

@@ -1,8 +1,8 @@
 import pygame
-import constants
-import UtilityFunction
+import Data.constants as constants
+import Utils.UtilityFunction as UtilityFunction
 import math
-from bullets import Bullets
+from Entities.bullets import Bullets
 
 
 class Turrets():
