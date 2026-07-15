@@ -26,15 +26,15 @@ class EnemyManager():
         self.enemy_spawn_timer += last_frame
         coins_earned = 0
 
-        if self.enemy_spawn_timer >= self.enemy_spawn_delay:
+        if not self.enemies: 
             self.spawn_enemy()
-            self.enemy_spawn_timer = 0
-            self.enemy_spawn_delay = max(400, self.enemy_spawn_delay - 10)
+        # if self.enemy_spawn_timer >= self.enemy_spawn_delay:
+        #     self.spawn_enemy()
+        #     self.enemy_spawn_timer = 0
+        #     self.enemy_spawn_delay = max(400, self.enemy_spawn_delay - 10)
 
         for enemy in self.enemies[:]:
-            enemy.movement()
-            if enemy.rect.colliderect(self.home_base.rect):
-                enemy.attack_base(self.home_base, last_frame)
+            enemy.loop(self.home_base, last_frame)
 
             for turret in turrets:
                 for bullet in turret.bullets[:]:

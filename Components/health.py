@@ -14,3 +14,6 @@ class Health():
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy
+
+    def draw(self):
+        pygame.draw.rect(constants.WIN, "red", self.rect)

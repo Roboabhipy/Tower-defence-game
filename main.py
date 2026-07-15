@@ -40,11 +40,6 @@ def turret_loop(turrets, last_frame, enemies):
         turret.loop(enemies, last_frame)
 
 
-# def button_loop(buttons, mouse_pos):
-#     for button in buttons:
-#         button.mouse_detection(mouse_pos)
-
-
 def draw(mapmanager, player, enemies, uimanager, mouse_grid_pos, coins):
     constants.WIN.fill("black")
     mapmanager.draw(enemies.enemies)
@@ -107,6 +102,7 @@ def main():
                             coins -= spent_coins
 
                             if waypoints:
+                                print("waypoint change")
                                 def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
                                     start, end, map_cor=None)
                                 enemies.update_waypoints(
@@ -116,7 +112,7 @@ def main():
 
         turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
 
-        # coins += enemies.update(last_frame, mapmanager.turrets)
+        coins += enemies.update(last_frame, mapmanager.turrets)
 
         uimanager.loop(mouse_pos, coins)
         draw(mapmanager, main_player, enemies,

@@ -6,7 +6,7 @@ from UI.buttons import Buttons
 
 
 class Menu():
-    def __init__(self, x, y, width=150, height=800, menu_col="black"):
+    def __init__(self, x, y, width=150, height=800, menu_col="#2C313C"):
         self.rect = pygame.Rect(x, y, width, height)
         self.menu_col = menu_col
 
@@ -19,7 +19,7 @@ class Menu():
         self.no_buttons += 1
 
         center_x = self.rect.centerx
-        center_y = (50 * self.no_buttons) + 75
+        center_y = (60 * self.no_buttons) + 20
 
         button = Buttons(text, function, button_col,
                          text_col, (center_x, center_y), price)
