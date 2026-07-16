@@ -102,7 +102,6 @@ def main():
                             coins -= spent_coins
 
                             if waypoints:
-                                print("waypoint change")
                                 def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
                                     start, end, map_cor=None)
                                 enemies.update_waypoints(

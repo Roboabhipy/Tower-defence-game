@@ -30,10 +30,12 @@ class Menu():
         for button in self.buttons:
             button.mouse_detection(mouse_pos, coins)
 
+        Buttons.hover()
+
     def get_function(self, mouse_pos):
         clicked_button = False
         for button in self.buttons:
-            if button.rect.collidepoint(mouse_pos):
+            if button.base_rect.collidepoint(mouse_pos):
                 self.current_function = button.get_function()
                 clicked_button = True
                 break

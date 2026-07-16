@@ -16,7 +16,7 @@ class MapManager:
         self.home_base = Base(950, 650, 50, 50, "blue", 300)
         self.enemy_base = Base(50, 100, 50, 50, "red", 300)
         self.current_waypoints = self.create_waypoint(
-        self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
+            self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
 
         self.block_placers = {
             1: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "green"),
@@ -64,7 +64,6 @@ class MapManager:
             path_changed = new_waypoints != self.current_waypoints
 
             if path_changed:
-                print("path changed")
                 self.current_waypoints = new_waypoints
                 return spent_coins, new_waypoints
 
@@ -121,7 +120,7 @@ class MapManager:
             waypoints.append(end_target)
 
         return waypoints
-    
+
     def draw(self, enemies):
         for list in self.occupied_grids:
             for obj in list:
