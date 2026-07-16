@@ -16,17 +16,14 @@ class EnemyManager():
         self.enemy_spawn_timer = 0
         self.enemy_spawn_delay = 3000
 
-        self.enemy_types = {
-            1: lambda pos: Enemy(pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[1]),
-            2: lambda pos: Enemy(pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[2]),
-            3: lambda pos: Enemy(pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[3])
-        }
+        self.enemy_created = lambda pos, current_id: Enemy(
+            pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[current_id])
 
     def update(self, last_frame, turrets):
         self.enemy_spawn_timer += last_frame
         coins_earned = 0
 
-        if not self.enemies: 
+        if not self.enemies:
             self.spawn_enemy()
         # if self.enemy_spawn_timer >= self.enemy_spawn_delay:
         #     self.spawn_enemy()
@@ -51,12 +48,12 @@ class EnemyManager():
 
     def spawn_enemy(self):
         type_enemy = random.randint(1, 20)
-        if type_enemy in self.enemy_types:
-            enemy_obj = self.enemy_types[type_enemy](
-                self.enemy_base.rect.center)
+        if type_enemy in enemy_data:
+            enemy_obj = self.enemy_created(
+                self.enemy_base.rect.center, type_enemy)
         else:
-            enemy_obj = self.enemy_types[1](
-                self.enemy_base.rect.center)
+            enemy_obj = self.enemy_created(
+                self.enemy_base.rect.center, 1)
         self.enemies.append(enemy_obj)
 
     def update_waypoints(self, waypoints, waypoint_gen):

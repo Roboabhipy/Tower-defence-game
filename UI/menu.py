@@ -6,16 +6,18 @@ from UI.buttons import Buttons
 
 
 class Menu():
-    def __init__(self, x, y, width=150, height=800, menu_col="#2C313C"):
+    def __init__(self, x, y, menu_title, width=150, height=800, menu_col="#2C313C"):
         self.rect = pygame.Rect(x, y, width, height)
         self.menu_col = menu_col
+
+        self.menu_title = constants.FONT.render(menu_title, True, "white")
 
         self.buttons = []
         self.no_buttons = 0
 
         self.current_function = False
 
-    def create_button(self, text, function, button_col, text_col, price):
+    def create_button(self, text, function, price, button_col="#404859", text_col="white"):
         self.no_buttons += 1
 
         center_x = self.rect.centerx
@@ -44,5 +46,7 @@ class Menu():
 
     def draw(self):
         pygame.draw.rect(constants.WIN, self.menu_col, self.rect)
+        constants.WIN.blit(self.menu_title, (self.rect.centerx - self.menu_title.get_width() /
+                           2, self.rect.y + 15))
         for button in self.buttons:
             button.draw()

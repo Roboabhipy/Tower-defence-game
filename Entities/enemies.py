@@ -22,6 +22,7 @@ class Enemy():
         self.health_rect.update_health(self.health)
         self.hit_count = 1001
         self.attack_count = 0
+        self.attack_animation_count = 0
         self.target_base = target_base
         self.direction = "right"
         self.animation_count = 0
@@ -66,9 +67,9 @@ class Enemy():
         self.vx = dx * self.vel
         self.vy = dy * self.vel
 
-        if self.vx > 0  and self.direction != "right":
+        if self.vx > 0 and self.direction != "right":
             self.direction = "right"
-            self.animation_count = 0 
+            self.animation_count = 0
 
         elif self.vx < 0 and self.direction != "left":
             self.direction = "left"
@@ -76,7 +77,6 @@ class Enemy():
         elif self.vx == 0 and self.direction != "right":
             self.direction = "right"
             self.animation_count = 0
-            
 
         # Move enemy so the center of the rectangle follows the waypoint path
         self.rect.centerx += self.vx
@@ -85,8 +85,10 @@ class Enemy():
 
     def update_sprite(self):
         self.sprite_sheet = "idle"
-        if self.hit_count <= 1000:
+        if self.hit_count <= 500:
             self.sprite_sheet = "hit"
+        elif self.attack_animation_count >= 500:
+            self.sprite_sheet = "attack"
         elif self.vx != 0 or self.vy != 0:
             self.sprite_sheet = "run"
 
@@ -104,9 +106,13 @@ class Enemy():
 
     def attack_base(self, base, last_frame):
         self.attack_count += last_frame
+        self.attack_animation_count += last_frame
         if self.attack_count > 500:
             base.hit(self.attack)
             self.attack_count = 0
+
+        if self.attack_animation_count >= 600:
+            self.attack_animation_count = 0
 
     def update_waypoints(self, waypoints):
         self.crt_wpt = 1
@@ -117,7 +123,7 @@ class Enemy():
         self.movement()
         if self.rect.colliderect(base.rect):
             self.attack_base(base, last_frame)
-        
+
         self.hit_count += last_frame
 
         self.update_sprite()

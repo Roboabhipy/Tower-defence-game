@@ -11,10 +11,13 @@ class MapManager:
     def __init__(self):
         self.occupied_grids = create_grid(
             constants.WIDTH // constants.GRID_WIDTH)
+
         self.blocks = []
         self.turrets = []
+
         self.home_base = Base(950, 650, 50, 50, "blue", 300)
         self.enemy_base = Base(50, 100, 50, 50, "red", 300)
+
         self.current_waypoints = self.create_waypoint(
             self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
 
@@ -24,32 +27,41 @@ class MapManager:
             3: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "red")
         }
 
-        self.turret_placers = {5: lambda pos: Turrets(pos[0], pos[1], **turret_data[5]),
-                               6: lambda pos: Turrets(pos[0], pos[1], **turret_data[6]),
-                               7: lambda pos: Turrets(pos[0], pos[1], **turret_data[7]),
-                               8: lambda pos: Turrets(pos[0], pos[1], **turret_data[8])
-                               }
+        self.turret_placers = lambda pos, id: Turrets(
+            pos[0], pos[1], **turret_data[id])
+
+        self.waypoint_text = []
+        i = 0
+        for waypoint in self.current_waypoints:
+            i += 1
+            text = constants.FONT.render(str(i), True, "black")
+            self.waypoint_text.append((text, waypoint[0], waypoint[1]))
 
     def place_block(self, block_selected, mouse_pos, coins):
+
         clicked_column = mouse_pos[0] // constants.GRID_WIDTH
         clicked_row = mouse_pos[1] // constants.GRID_HEIGHT
+
         spent_coins = 0
         turret_obj = None
         obj = Map(
             clicked_column, clicked_row, "dark green")
 
-        if block_selected not in self.block_placers and block_selected not in self.turret_placers:
+        clicked_obj = self.occupied_grids[clicked_row][clicked_column]
+
+        if clicked_obj.type == "End":
+            return spent_coins, False
+
+        if block_selected not in self.block_placers and block_selected not in turret_data:
             return spent_coins, False
 
         if block_selected in self.block_placers:
             obj = self.block_placers[block_selected](mouse_pos)
 
-        elif block_selected in self.turret_placers:
+        elif block_selected in turret_data:
             turret_price = turret_data[block_selected]["price"]
             if coins >= turret_price:
-                turret_obj = self.turret_placers[block_selected](mouse_pos)
-                obj = Map(
-                    clicked_column, clicked_row, "dark green")
+                turret_obj = self.turret_placers(mouse_pos, block_selected)
 
         new_waypoints = self.is_valid_placement(
             clicked_row, clicked_column, obj)
@@ -81,18 +93,29 @@ class MapManager:
 
     def delete_obj(self, mouse_pos):
         coins_earned = 0
+
+        clicked_column = mouse_pos[0] // constants.GRID_WIDTH
+        clicked_row = mouse_pos[1] // constants.GRID_HEIGHT
+
         for turret in self.turrets[:]:
             if (turret.rect.x, turret.rect.y) == mouse_pos:
                 coins_earned += int(turret.price * 0.45)
                 self.turrets.remove(turret)
                 break
 
-        for obj in self.occupied_grids[:]:
-            for block in obj:
-                if (block.rect.x, block.rect.y) == mouse_pos:
-                    block.type = "Obstacle"
-                    block.colour = "dark green"
-                    break
+        obj = Map(
+            clicked_column, clicked_row, "dark green")
+        new_waypoints = self.is_valid_placement(
+            clicked_row, clicked_column, obj)
+
+        if new_waypoints:
+            for grid in self.occupied_grids[:]:
+                for block in grid:
+                    if (block.rect.x, block.rect.y) == mouse_pos and block.type not in ("Start", "End"):
+                        print(block.type)
+                        block.type = "Obstacle"
+                        block.colour = "dark green"
+                        break
 
         return coins_earned
 
@@ -128,3 +151,6 @@ class MapManager:
 
         for turret in self.turrets:
             turret.draw(enemies)
+
+        for text in self.waypoint_text:
+            constants.WIN.blit(text[0], (text[1], text[2]))
