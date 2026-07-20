@@ -5,17 +5,18 @@ from Components.health import Health
 from Utils.UtilityFunction import load_sprite_sheets
 
 
-class Enemy():
-    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, loot, sprite):
+class Troops():
+    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, sprite, loot=False, price=False):
         self.rect = pygame.Rect(x, y, width, height)
         self.health_rect = Health(
             self.rect.centerx-15, self.rect.y - 15, 30, 5, health, health)
         self.colour = colour
         self.health = health
-        self.attack = attack
+        self.attack_dmg = attack
         self.crt_wpt = 0
         self.vel = velocity
         self.loot = loot
+        self.price = price
         self.waypoints = waypoints
         self.vx = 0
         self.vy = 0
@@ -29,6 +30,7 @@ class Enemy():
         self.sprite_image = load_sprite_sheets(
             "Assets", sprite, width, height, 32, True)
         self.animation_delay = 3
+        self.attacking = False
 
     def movement(self):
         # If we reached the final waypoint, stop
@@ -104,15 +106,18 @@ class Enemy():
         self.health -= damage
         self.health_rect.update_health(self.health)
 
-    def attack_base(self, base, last_frame):
+    def attack(self, last_frame, target):
+        self.attacking = True
         self.attack_count += last_frame
         self.attack_animation_count += last_frame
         if self.attack_count > 500:
-            base.hit(self.attack)
+            target.hit(self.attack_dmg)
             self.attack_count = 0
 
         if self.attack_animation_count >= 600:
             self.attack_animation_count = 0
+
+        # self.attacking = False
 
     def update_waypoints(self, waypoints):
         self.crt_wpt = 1
@@ -120,13 +125,15 @@ class Enemy():
             self.rect.center, (self.target_base.rect.x, self.target_base.rect.centery))
 
     def loop(self, base, last_frame):
-        self.movement()
+        if self.attacking == False:
+            self.movement()
         if self.rect.colliderect(base.rect):
-            self.attack_base(base, last_frame)
+            self.attack(last_frame, base)
 
         self.hit_count += last_frame
 
         self.update_sprite()
+        self.attacking = False
 
     def draw(self):
         # pygame.draw.rect(constants.WIN, self.colour, self.rect)

@@ -1,5 +1,5 @@
 turret_data = {
-    5: {"width": 40,
+    6: {"width": 40,
         "height": 40,
         "colour": "red",
         "damage": 5,
@@ -7,9 +7,9 @@ turret_data = {
         "velocity": 7,
         "frequency": 500,
         "price": 50,
-    },
-    
-    6:{"width": 30,
+        },
+
+    7: {"width": 30,
         "height": 30,
         "colour": "red",
         "damage": 3,
@@ -17,10 +17,10 @@ turret_data = {
         "velocity": 9,
         "frequency": 200,
         "price": 100,
-        
+
         },
-    
-    7:{"width": 50,
+
+    8: {"width": 50,
         "height": 50,
         "colour": "red",
         "damage": 15,
@@ -29,8 +29,8 @@ turret_data = {
         "frequency": 900,
         "price": 350,
         },
-    
-    8:{"width": 45,
+
+    9: {"width": 45,
         "height": 45,
         "colour": "red",
         "damage": 10,

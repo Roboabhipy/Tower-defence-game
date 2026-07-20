@@ -1,6 +1,6 @@
 import random
 
-from Entities.enemies import Enemy
+from Entities.troops import Troops
 from Data.enemy_types import enemy_data
 
 
@@ -16,7 +16,7 @@ class EnemyManager():
         self.enemy_spawn_timer = 0
         self.enemy_spawn_delay = 3000
 
-        self.enemy_created = lambda pos, current_id: Enemy(
+        self.enemy_created = lambda pos, current_id: Troops(
             pos[0], pos[1], self.home_base, self.waypoints, **enemy_data[current_id])
 
     def update(self, last_frame, turrets):
@@ -64,6 +64,3 @@ class EnemyManager():
     def draw(self):
         for enemy in self.enemies:
             enemy.draw()
-
-        self.home_base.draw()
-        self.enemy_base.draw()

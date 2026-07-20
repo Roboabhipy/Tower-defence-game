@@ -22,9 +22,9 @@ class MapManager:
             self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
 
         self.block_placers = {
-            1: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "green"),
-            2: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "brown", "Path"),
-            3: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "red")
+            2: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "green"),
+            3: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "brown", "Path"),
+            4: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "red")
         }
 
         self.turret_placers = lambda pos, id: Turrets(
@@ -49,10 +49,7 @@ class MapManager:
 
         clicked_obj = self.occupied_grids[clicked_row][clicked_column]
 
-        if clicked_obj.type == "End":
-            return spent_coins, False
-
-        if block_selected not in self.block_placers and block_selected not in turret_data:
+        if clicked_obj.type in ("Start", "End"):
             return spent_coins, False
 
         if block_selected in self.block_placers:
@@ -125,12 +122,12 @@ class MapManager:
                 self.turrets.remove(turret)
                 break
 
-    def create_waypoint(self, start_coords, end_target=None, map_cor=None):
+    def create_waypoint(self, start_coords, end_target, map_cor=None):
         if map_cor == None:
             map_cor = self.occupied_grids
         start_coords = (start_coords[0] // constants.GRID_WIDTH,
                         start_coords[1] // constants.GRID_HEIGHT)
-        end_coords = constants.MAP_COR[-1]
+        end_coords = end_target
         end_coords = (end_coords[0] // constants.GRID_WIDTH,
                       end_coords[1] // constants.GRID_HEIGHT)
         start = map_cor[start_coords[1]][start_coords[0]]
@@ -148,6 +145,9 @@ class MapManager:
         for list in self.occupied_grids:
             for obj in list:
                 obj.draw()
+
+        self.home_base.draw()
+        self.enemy_base.draw()
 
         for turret in self.turrets:
             turret.draw(enemies)

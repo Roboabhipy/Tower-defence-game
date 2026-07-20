@@ -24,41 +24,50 @@ def load_image(image, width, height, rotate):
     return image_cache[key]
 
 
+sprite_cache = {}
+
+
 def load_sprite_sheets(dir1, dir2, width, height, loop_size, direction=False):
-    path = os.path.join(dir1, dir2)
-    images = [f for f in os.listdir(
-        path) if os.path.isfile(os.path.join(path, f))]
+    key = (dir2, width, height)
 
-    all_sprites = {}
+    if key not in sprite_cache:
+        path = os.path.join(dir1, dir2)
+        images = [f for f in os.listdir(
+            path) if os.path.isfile(os.path.join(path, f))]
 
-    for image in images:
-        sprite_sheet = pygame.image.load(
-            os.path.join(path, image)).convert_alpha()
-        sheet_width = sprite_sheet.get_width()
-        sheet_height = sprite_sheet.get_height()
+        all_sprites = {}
 
-        sprites = []
+        for image in images:
+            sprite_sheet = pygame.image.load(
+                os.path.join(path, image)).convert_alpha()
+            sheet_width = sprite_sheet.get_width()
+            sheet_height = sprite_sheet.get_height()
 
-        # Loop rows
-        for y in range(0, sheet_height, loop_size):
-            # Loop columns
-            for x in range(0, sheet_width, loop_size):
-                surface = pygame.Surface(
-                    (loop_size, loop_size), pygame.SRCALPHA)
+            sprites = []
 
-                rect = pygame.Rect(x, y, loop_size, loop_size)
-                surface.blit(sprite_sheet, (0, 0), rect)
+            # Loop rows
+            for y in range(0, sheet_height, loop_size):
+                # Loop columns
+                for x in range(0, sheet_width, loop_size):
+                    surface = pygame.Surface(
+                        (loop_size, loop_size), pygame.SRCALPHA)
 
-                surface = pygame.transform.scale(surface, (width, height))
-                sprites.append(surface)
+                    rect = pygame.Rect(x, y, loop_size, loop_size)
+                    surface.blit(sprite_sheet, (0, 0), rect)
 
-        if direction:
-            all_sprites[image.replace(".png", "") + "_right"] = sprites
-            all_sprites[image.replace(".png", "") + "_left"] = flip(sprites)
-        else:
-            all_sprites[image.replace(".png", "")] = sprites
+                    surface = pygame.transform.scale(surface, (width, height))
+                    sprites.append(surface)
 
-    return all_sprites
+            if direction:
+                all_sprites[image.replace(".png", "") + "_right"] = sprites
+                all_sprites[image.replace(
+                    ".png", "") + "_left"] = flip(sprites)
+            else:
+                all_sprites[image.replace(".png", "")] = sprites
+
+        sprite_cache[key] = all_sprites
+
+    return sprite_cache[key]
 
 
 def flip(sprites):

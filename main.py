@@ -5,6 +5,7 @@ from Managers.enemymanager import EnemyManager
 from Managers.mapmanager import MapManager
 from Entities.player import Player
 from Managers.uimanager import UIManager
+from Managers.allymanager import AllyManager
 
 TRANSPERANT_MOUSE_RECT = pygame.Surface(
     (constants.GRID_WIDTH, constants.GRID_HEIGHT), pygame.SRCALPHA)
@@ -40,7 +41,7 @@ def turret_loop(turrets, last_frame, enemies):
         turret.loop(enemies, last_frame)
 
 
-def draw(mapmanager, player, enemies, uimanager, mouse_grid_pos, coins):
+def draw(mapmanager, player, enemies, uimanager, mouse_grid_pos, coins, allymanager):
     constants.WIN.fill("black")
     mapmanager.draw(enemies.enemies)
 
@@ -48,6 +49,7 @@ def draw(mapmanager, player, enemies, uimanager, mouse_grid_pos, coins):
     draw_mouse_rect(mouse_grid_pos)
 
     enemies.draw()
+    allymanager.draw()
 
     player.draw()
 
@@ -63,13 +65,18 @@ def main():
 
     mapmanager = MapManager()
 
-    enemies = EnemyManager(mapmanager.enemy_base,
-                           mapmanager.home_base, mapmanager.current_waypoints)
+    enemymanager = EnemyManager(mapmanager.enemy_base,
+                                mapmanager.home_base, mapmanager.current_waypoints)
 
     uimanager = UIManager()
 
     main_player = Player(mapmanager.home_base.rect.x,
                          mapmanager.home_base.rect.y, 40, 40, 10, 3, 2)
+
+    allymanager = AllyManager(
+        mapmanager.home_base, mapmanager.enemy_base, mapmanager.create_waypoint)
+    # test_waypoints = mapmanager.create_waypoint(
+    #     mapmanager.home_base.rect.center, mapmanager.enemy_base.rect.center)
 
     coins = 1000
 
@@ -86,36 +93,42 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                block_selected, clicked_button = uimanager.menu["build"].get_function(
+                block_selected, clicked_button = uimanager.menu["Build Shop"].get_function(
                     mouse_pos)
 
                 if not clicked_button:
                     in_range = main_player.check_range(mouse_grid_pos)
                     if in_range:
-                        if block_selected == 4:
+                        if block_selected == 1:
                             coins += mapmanager.delete_obj(mouse_grid_pos)
 
-                        else:
+                        elif block_selected in range(2, 9):
                             spent_coins, waypoints = mapmanager.place_block(
                                 block_selected, mouse_grid_pos, coins)
 
                             coins -= spent_coins
 
+                        elif block_selected in range(10, 13):
+                            waypoints = False
+                            coins -= allymanager.create_ally(
+                                coins, block_selected)
+
                             if waypoints:
                                 def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
                                     start, end, map_cor=None)
-                                enemies.update_waypoints(
+                                enemymanager.update_waypoints(
                                     waypoints, waypoint_gen)
 
         main_player.loop(keys)
 
-        turret_loop(mapmanager.turrets, last_frame, enemies.enemies)
+        turret_loop(mapmanager.turrets, last_frame, enemymanager.enemies)
 
-        coins += enemies.update(last_frame, mapmanager.turrets)
+        coins += enemymanager.update(last_frame, mapmanager.turrets)
+        allymanager.update(last_frame, enemymanager.enemies)
 
         uimanager.loop(mouse_pos, coins)
-        draw(mapmanager, main_player, enemies,
-             uimanager, mouse_grid_pos, coins)
+        draw(mapmanager, main_player, enemymanager,
+             uimanager, mouse_grid_pos, coins, allymanager)
 
         pygame.display.update()
     pygame.quit()

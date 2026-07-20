@@ -9,16 +9,17 @@ class UIManager():
     def __init__(self):
         self.menu = {}
 
-        self.selected_menu = "build"
+        self.selected_menu = "Build Shop"
 
-        self.create_menu("build", 1050, 0)
-        self.menu["build"].create_button("Tower", 5, 50)
-        self.menu["build"].create_button("Rapid", 6, 100)
-        self.menu["build"].create_button("Cannon", 7, 350)
-        self.menu["build"].create_button("Sniper", 8, 250)
-        self.menu["build"].create_button("Path", 2, 250)
-        self.menu["build"].create_button("Barrier", 1, 250)
-        self.menu["build"].create_button("Delete", 4, 0)
+        self.create_menu("Build Shop", 1050, 0)
+        self.menu["Build Shop"].create_button("Tower", 6, 50)
+        self.menu["Build Shop"].create_button("Rapid", 7, 100)
+        self.menu["Build Shop"].create_button("Cannon", 8, 350)
+        self.menu["Build Shop"].create_button("Sniper", 9, 250)
+        self.menu["Build Shop"].create_button("Path", 3, 100)
+        self.menu["Build Shop"].create_button("Barrier", 2, 250)
+        self.menu["Build Shop"].create_button("Small Troop", 10, 100)
+        self.menu["Build Shop"].create_button("Delete", 1, 0)
 
     def create_menu(self, name, x, y, width=150, height=800, menu_col="black"):
         menu = Menu(x, y, name, width, height, menu_col)
