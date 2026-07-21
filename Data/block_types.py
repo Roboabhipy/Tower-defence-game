@@ -1,13 +1,13 @@
 block_data = {
-    1: {
-        "colour": "green"
-    },
     2: {
-        "colour": "brown",
+        "colour": (0, 255, 0)
+    },
+    3: {
+        "colour": (165, 42, 42),
         "type": "Path"
     },
 
-    3: {
-        "colour": "red"
+    4: {
+        "colour": (255, 0, 0)
     }
 }
