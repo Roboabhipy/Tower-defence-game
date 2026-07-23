@@ -70,10 +70,8 @@ def draw(mapmanager, player, enemies, uimanager, coins, allymanager, placementpr
     allymanager.draw()
 
     player.draw()
-
-    uimanager.draw()
-
     placementpreview.draw()
+    uimanager.draw()
 
     coin_text = constants.FONT.render('Coins: ' + str(coins), True, "white")
     constants.WIN.blit(coin_text, (10, 10))
@@ -91,7 +89,7 @@ def main():
     uimanager = UIManager()
 
     main_player = Player(mapmanager.home_base.rect.x,
-                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 2)
+                         mapmanager.home_base.rect.y, 40, 40, 10, 3, 2, mapmanager.occupied_grids)
 
     allymanager = AllyManager(
         mapmanager.home_base, mapmanager.enemy_base, mapmanager.create_waypoint)

@@ -47,6 +47,6 @@ class Menu():
     def draw(self):
         pygame.draw.rect(constants.WIN, self.menu_col, self.rect)
         constants.WIN.blit(self.menu_title, (self.rect.centerx - self.menu_title.get_width() /
-                           2, self.rect.y + 15))
+                                             2, self.rect.y + 15))
         for button in self.buttons:
             button.draw()

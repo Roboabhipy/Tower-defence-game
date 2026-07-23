@@ -34,7 +34,7 @@ class Troops():
 
     def movement(self):
         # If we reached the final waypoint, stop
-        if self.crt_wpt >= len(self.waypoints):
+        if self.crt_wpt >= len(self.waypoints) or self.attacking:
             self.vx = 0
             self.vy = 0
             return
@@ -125,8 +125,7 @@ class Troops():
             self.rect.center, (self.target_base.rect.x, self.target_base.rect.centery))
 
     def loop(self, base, last_frame):
-        if self.attacking == False:
-            self.movement()
+        self.movement()
         if self.rect.colliderect(base.rect):
             self.attack(last_frame, base)
 

@@ -15,14 +15,19 @@ class UIManager():
 
         self.create_menu("Build Shop", 1050, 0)
         create_buttons(self.menu["Build Shop"])
+
         self.menu["Build Shop"].create_button("Small Troop", 10, 100)
 
     def create_menu(self, name, x, y, width=150, height=800, menu_col="black"):
         menu = Menu(x, y, name, width, height, menu_col)
         self.menu[name] = menu
 
+    def get_function(self, mouse_pos):
+        return self.menu[self.selected_menu].get_function(mouse_pos)
+
     def loop(self, mouse_pos, coins=0):
-        self.menu[self.selected_menu].loop(mouse_pos, coins)
+        if self.selected_menu != "":
+            self.menu[self.selected_menu].loop(mouse_pos, coins)
 
     def draw(self):
         if self.selected_menu != "":
