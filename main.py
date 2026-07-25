@@ -15,15 +15,21 @@ from Entities.player import Player
 from Components.placementpreview import PlacementPreview
 
 
-def draw_grid():
+def create_grid_surface():
+
+    grid_surface = pygame.Surface(
+        (constants.WIDTH, constants.HEIGHT), pygame.SRCALPHA)
 
     # Draws grid
-    for i in range(constants.WIDTH // constants.GRID_WIDTH):
-        pygame.draw.line(constants.WIN, "white", (i*constants.GRID_WIDTH,
-                         0), (i*constants.GRID_WIDTH, constants.HEIGHT))
-        for j in range(constants.HEIGHT // constants.GRID_HEIGHT):
-            pygame.draw.line(constants.WIN, "white", (0, j*constants.GRID_HEIGHT),
-                             (constants.WIDTH, j*constants.GRID_HEIGHT))
+    for i in range(0, constants.WIDTH, constants.GRID_WIDTH):
+        pygame.draw.line(grid_surface, "white", (i,
+                         0), (i, constants.HEIGHT))
+
+    for j in range(0, constants.HEIGHT, constants.GRID_HEIGHT):
+        pygame.draw.line(grid_surface, "white", (0, j),
+                         (constants.WIDTH, j))
+
+    return grid_surface
 
 
 def get_mouse_grid_pos(mouse_pos):
@@ -31,6 +37,7 @@ def get_mouse_grid_pos(mouse_pos):
         mouse_pos[0] // constants.GRID_WIDTH)*constants.GRID_WIDTH
     mouse_grid_y = (
         mouse_pos[1] // constants.GRID_HEIGHT)*constants.GRID_HEIGHT
+
     return mouse_grid_x, mouse_grid_y
 
 
@@ -43,6 +50,7 @@ def get_type(block_selected):
     selected_type = None
     display_range = False
     colour = False
+
     if block_selected == 1:
         selected_type = "Delete"
 
@@ -60,11 +68,11 @@ def get_type(block_selected):
     return selected_type, display_range, colour
 
 
-def draw(mapmanager, player, enemies, uimanager, coins, allymanager, placementpreview):
+def draw(grid_surface, mapmanager, player, enemies, uimanager, coins, allymanager, placementpreview):
     constants.WIN.fill("black")
     mapmanager.draw(enemies.enemies)
 
-    draw_grid()
+    constants.WIN.blit(grid_surface, (0, 0))
 
     enemies.draw()
     allymanager.draw()
@@ -81,6 +89,8 @@ def main():
     clock = pygame.time.Clock()
     run = True
 
+    grid_surface = create_grid_surface()
+
     mapmanager = MapManager()
 
     enemymanager = EnemyManager(mapmanager.enemy_base,
@@ -96,7 +106,7 @@ def main():
 
     placementpreview = PlacementPreview()
 
-    coins = 1000
+    coins = 1000000000
 
     block_selected = 0
 
@@ -120,12 +130,14 @@ def main():
                     selected_type, block_selected, block_colour, display_range)
 
                 if not clicked_button:
-                    in_range = main_player.check_range(mouse_grid_pos)
+                    # in_range = main_player.check_range(mouse_grid_pos)
+                    in_range = True
                     if in_range:
+                        waypoints = False
+
                         if selected_type == "Delete":
                             coins += mapmanager.delete_obj(mouse_grid_pos)
 
-                        # Range increased by 1 as final number isn't inclusive
                         elif selected_type in ("Block", "Turret"):
                             spent_coins, waypoints = mapmanager.place_block(
                                 block_selected, mouse_grid_pos, coins)
@@ -133,27 +145,26 @@ def main():
                             coins -= spent_coins
 
                         elif selected_type == "Ally":
-                            waypoints = False
                             coins -= allymanager.create_ally(
                                 coins, block_selected)
 
-                            if waypoints:
-                                def waypoint_gen(start, end=None): return mapmanager.create_waypoint(
-                                    start, end, map_cor=None)
-                                enemymanager.update_waypoints(
-                                    waypoints, waypoint_gen)
+                        if waypoints:
+                            enemymanager.update_waypoints(
+                                waypoints, mapmanager.create_waypoint)
 
         main_player.loop(keys)
 
         turret_loop(mapmanager.turrets, last_frame, enemymanager.enemies)
 
         coins += enemymanager.update(last_frame, mapmanager.turrets)
+
         allymanager.update(last_frame, enemymanager.enemies)
 
         placementpreview.loop(mouse_pos)
 
         uimanager.loop(mouse_pos, coins)
-        draw(mapmanager, main_player, enemymanager,
+
+        draw(grid_surface, mapmanager, main_player, enemymanager,
              uimanager, coins, allymanager, placementpreview)
 
         pygame.display.update()

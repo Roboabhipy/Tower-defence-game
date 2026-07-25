@@ -30,12 +30,12 @@ class MapManager:
         self.turret_placers = lambda pos, id: Turrets(
             pos[0], pos[1], **turret_data[id])
 
-        self.waypoint_text = []
-        i = 0
-        for waypoint in self.current_waypoints:
-            i += 1
-            text = constants.FONT.render(str(i), True, "black")
-            self.waypoint_text.append((text, waypoint[0], waypoint[1]))
+#         self.waypoint_text = []
+#         i = 0
+#         for waypoint in self.current_waypoints:
+#             i += 1
+#             text = constants.FONT.render(str(i), True, "black")
+#             self.waypoint_text.append((text, waypoint[0], waypoint[1]))
 
     def place_block(self, block_selected, mouse_pos, coins):
 
@@ -151,5 +151,5 @@ class MapManager:
         for turret in self.turrets:
             turret.draw(enemies)
 
-        for text in self.waypoint_text:
-            constants.WIN.blit(text[0], (text[1], text[2]))
+#         for text in self.waypoint_text:
+#             constants.WIN.blit(text[0], (text[1], text[2]))

@@ -17,7 +17,6 @@ class Player:
             "Assets", "VirtualGuy", width, height, 32, True)
         self.animation_delay = 3
         self.grid = grid
-        print(len(self.grid))
         self.pos_limit = self.calculate_pos_limit()
 
     def movement(self, keys):
@@ -29,19 +28,16 @@ class Player:
         if self.pos_limit["up"]:
             if keys[pygame.K_w] and self.rect.y > self.pos_limit["up"]:
                 self.moved = True
-                self.rect.y -= self.vel
                 self.y_vel = -self.vel
 
         if self.pos_limit["down"]:
             if keys[pygame.K_s] and self.rect.y < self.pos_limit["down"] - self.rect.height:
                 self.moved = True
-                self.rect.y += self.vel
                 self.y_vel = self.vel
 
         if self.pos_limit["right"]:
             if keys[pygame.K_d] and self.rect.x < self.pos_limit["right"] - self.rect.width:
                 self.moved = True
-                self.rect.x += self.vel
                 self.x_vel = self.vel
 
                 if self.direction != "right":
@@ -51,12 +47,15 @@ class Player:
         if self.pos_limit["left"]:
             if keys[pygame.K_a] and self.rect.x > self.pos_limit["left"]:
                 self.moved = True
-                self.rect.x -= self.vel
                 self.x_vel = -self.vel
 
                 if self.direction != "left":
                     self.direction = "left"
                     self.animation_count = 0
+
+        if self.moved:
+            self.rect.x += self.x_vel
+            self.rect.y += self.y_vel
 
     def calculate_pos_limit(self):
         neighbours = self.update_neighbours()
@@ -144,6 +143,7 @@ class Player:
             ((self.rect.y // constants.GRID_HEIGHT)*constants.GRID_HEIGHT)
         distance = math.hypot(x_distance, y_distance)
         distance = (distance // constants.GRID_WIDTH)
+
         if distance <= self.build_range:
             return True
 
@@ -157,4 +157,5 @@ class Player:
             self.pos_limit = self.calculate_pos_limit()
 
     def draw(self):
+        # pygame.draw.rect(constants.WIN, "red", self.rect)
         constants.WIN.blit(self.sprite, (self.rect.x, self.rect.y))
