@@ -32,8 +32,6 @@ class Menu():
         for button in self.buttons:
             button.mouse_detection(mouse_pos, coins)
 
-        Buttons.hover()
-
     def get_function(self, mouse_pos):
         clicked_button = False
         for button in self.buttons:

@@ -121,7 +121,7 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                block_selected, clicked_button = uimanager.menu["Build Shop"].get_function(
+                block_selected, clicked_button = uimanager.get_function(
                     mouse_pos)
 
                 selected_type, display_range, block_colour = get_type(

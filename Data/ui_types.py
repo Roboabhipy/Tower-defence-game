@@ -1,6 +1,7 @@
 from Data.turret_types import turret_data
+from Data.ally_types import ally_data
 
-ui_data = {
+build_data = {
     1: {"text": "Tower",
         "function": 6,
         "price": turret_data[6]["price"]
@@ -42,4 +43,37 @@ ui_data = {
         "price": 0
 
         },
+}
+
+troop_data = {
+    10: {
+        "text": "Baby PinkGuy",
+        "function": 10,
+        "price": ally_data[10]["price"],
+    },
+    11: {
+        "text": "PinkGuy",
+        "function": 11,
+        "price": ally_data[11]["price"],
+    },
+    12: {
+        "text": "Baby MaskDude",
+        "function": 12,
+        "price": ally_data[12]["price"],
+    },
+    13: {
+        "text": "MaskDude",
+        "function": 13,
+        "price": ally_data[13]["price"],
+    },
+    14: {
+        "text": "Baby NinjaFrog",
+        "function": 14,
+        "price": ally_data[14]["price"],
+    },
+    15: {
+        "text": "NinjaFrog",
+        "function": 15,
+        "price": ally_data[15]["price"],
+    },
 }

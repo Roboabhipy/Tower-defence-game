@@ -27,17 +27,66 @@ def load_image(image, width, height, rotate):
 sprite_cache = {}
 
 
-def load_sprite_sheets(dir1, dir2, width, height, loop_size, direction=False):
-    key = (dir2, width, height)
+def _normalize_flip_targets(only_flip):
+    if only_flip in (True, "All"):
+        return "All"
+
+    if isinstance(only_flip, str):
+        return {only_flip}
+
+    if isinstance(only_flip, (list, tuple, set)):
+        return {os.path.splitext(name)[0] for name in only_flip if isinstance(name, str)}
+
+    return set()
+
+
+def _add_sprite_aliases(all_sprites):
+    alias_sources = {
+        "idle": "run",
+        "hit": "run",
+        "attack": "run",
+    }
+
+    for alias_name, source_name in alias_sources.items():
+        if alias_name not in all_sprites and source_name in all_sprites:
+            all_sprites[alias_name] = all_sprites[source_name]
+
+        if alias_name + "_right" not in all_sprites and source_name + "_right" in all_sprites:
+            all_sprites[alias_name +
+                        "_right"] = all_sprites[source_name + "_right"]
+
+        if alias_name + "_left" not in all_sprites and source_name + "_left" in all_sprites:
+            all_sprites[alias_name +
+                        "_left"] = all_sprites[source_name + "_left"]
+
+    direction_names = ("left", "right", "up", "down")
+    for state in list(all_sprites.keys()):
+        if state.startswith("run_") or state.startswith("idle_") or state.startswith("hit_") or state.startswith("attack_"):
+            continue
+
+        for direction in direction_names:
+            state_direction = state + "_" + direction
+            if state_direction not in all_sprites:
+                if state in all_sprites and "run_" + direction in all_sprites:
+                    all_sprites[state_direction] = all_sprites["run_" + direction]
+                elif state in all_sprites:
+                    all_sprites[state_direction] = all_sprites[state]
+
+
+def load_sprite_sheets(dir1, dir2, width, height, loop_size, only_flip="All"):
+    key = (dir2, width, height, loop_size, only_flip)
+    flip_targets = _normalize_flip_targets(only_flip)
 
     if key not in sprite_cache:
         path = os.path.join(dir1, dir2)
-        images = [f for f in os.listdir(
-            path) if os.path.isfile(os.path.join(path, f))]
+        images = sorted([
+            f for f in os.listdir(path)
+            if os.path.isfile(os.path.join(path, f)) and f.lower().endswith(".png")
+        ])
 
         all_sprites = {}
-
         for image in images:
+            base_name = os.path.splitext(image)[0]
             sprite_sheet = pygame.image.load(
                 os.path.join(path, image)).convert_alpha()
             sheet_width = sprite_sheet.get_width()
@@ -45,9 +94,7 @@ def load_sprite_sheets(dir1, dir2, width, height, loop_size, direction=False):
 
             sprites = []
 
-            # Loop rows
             for y in range(0, sheet_height, loop_size):
-                # Loop columns
                 for x in range(0, sheet_width, loop_size):
                     surface = pygame.Surface(
                         (loop_size, loop_size), pygame.SRCALPHA)
@@ -58,12 +105,14 @@ def load_sprite_sheets(dir1, dir2, width, height, loop_size, direction=False):
                     surface = pygame.transform.scale(surface, (width, height))
                     sprites.append(surface)
 
-            if direction:
-                all_sprites[image.replace(".png", "") + "_right"] = sprites
-                all_sprites[image.replace(
-                    ".png", "") + "_left"] = flip(sprites)
-            else:
-                all_sprites[image.replace(".png", "")] = sprites
+            all_sprites[base_name] = sprites
+            should_flip = flip_targets == "All" or base_name in flip_targets
+
+            if should_flip:
+                all_sprites[base_name + "_right"] = sprites
+                all_sprites[base_name + "_left"] = flip(sprites)
+
+        _add_sprite_aliases(all_sprites)
 
         sprite_cache[key] = all_sprites
 

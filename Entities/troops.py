@@ -6,7 +6,7 @@ from Utils.UtilityFunction import load_sprite_sheets
 
 
 class Troops():
-    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, sprite, loot=False, price=False):
+    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, sprite, sprite_sheet_size, only_flip="All", has_direction=False, loot=False, price=False):
         self.rect = pygame.Rect(x, y, width, height)
         self.health_rect = Health(
             self.rect.centerx-15, self.rect.y - 15, 30, 5, health, health)
@@ -28,7 +28,8 @@ class Troops():
         self.direction = "right"
         self.animation_count = 0
         self.sprite_image = load_sprite_sheets(
-            "Assets", sprite, width, height, 32, True)
+            "Assets", sprite, width*1.5, height*1.5, sprite_sheet_size, only_flip)
+        self.has_directions = has_direction
         self.animation_delay = 3
         self.attacking = False
 
@@ -76,6 +77,15 @@ class Troops():
         elif self.vx < 0 and self.direction != "left":
             self.direction = "left"
             self.animation_count = 0
+
+        elif self.vy < 0 and self.direction != "down":
+            self.direction = "down"
+            self.animation_count = 0
+
+        elif self.vy > 0 and self.direction != "up":
+            self.direction = "up"
+            self.animation_count = 0
+
         elif self.vx == 0 and self.direction != "right":
             self.direction = "right"
             self.animation_count = 0
@@ -99,6 +109,7 @@ class Troops():
         sprite_index = (self.animation_count //
                         self.animation_delay) % len(sprites)
         self.sprite = sprites[sprite_index]
+        self.sprite.get_rect().center = self.rect.center
         self.animation_count += 1
 
     def hit(self, damage):
@@ -135,6 +146,8 @@ class Troops():
         self.attacking = False
 
     def draw(self):
-        # pygame.draw.rect(constants.WIN, self.colour, self.rect)
-        constants.WIN.blit(self.sprite, (self.rect.x, self.rect.y))
+#         pygame.draw.rect(constants.WIN, self.colour, self.rect)
+        sprite_surface_rect = self.sprite.get_rect()
+        sprite_surface_rect.center = self.rect.center
+        constants.WIN.blit(self.sprite, sprite_surface_rect)
         self.health_rect.draw()

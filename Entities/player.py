@@ -14,7 +14,7 @@ class Player:
         self.direction = "right"
         self.animation_count = 0
         self.sprite_image = load_sprite_sheets(
-            "Assets", "VirtualGuy", width, height, 32, True)
+            "Assets", "VirtualGuy", width, height, 32)
         self.animation_delay = 3
         self.grid = grid
         self.pos_limit = self.calculate_pos_limit()
@@ -31,12 +31,12 @@ class Player:
                 self.y_vel = -self.vel
 
         if self.pos_limit["down"]:
-            if keys[pygame.K_s] and self.rect.y < self.pos_limit["down"] - self.rect.height:
+            if keys[pygame.K_s] and self.rect.y + self.rect.height < self.pos_limit["down"]:
                 self.moved = True
                 self.y_vel = self.vel
 
         if self.pos_limit["right"]:
-            if keys[pygame.K_d] and self.rect.x < self.pos_limit["right"] - self.rect.width:
+            if keys[pygame.K_d] and self.rect.x + self.rect.width < self.pos_limit["right"]:
                 self.moved = True
                 self.x_vel = self.vel
 
