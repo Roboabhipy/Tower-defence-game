@@ -120,6 +120,12 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
+            if keys[pygame.K_LEFT]:
+                uimanager.cycle_menu("left")
+
+            if keys[pygame.K_RIGHT]:
+                uimanager.cycle_menu("right")
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 block_selected, clicked_button = uimanager.get_function(
                     mouse_pos)

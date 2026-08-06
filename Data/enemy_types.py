@@ -22,7 +22,7 @@ enemy_data = {
         "attack": 2,
         "velocity": 5,
         "loot": 15,
-        "sprite_sheet_size": 95,
+        "sprite_sheet_size": 96,
         "has_direction": True,
         "only_flip": "run",
         "sprite": "Rat",

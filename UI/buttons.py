@@ -13,7 +13,7 @@ class Buttons():
         self.colour = self.original_button_colour
         self.price = price
 
-        self.text_surface = constants.FONT.render(self.text, True, text_col)
+        self.text_surface = constants.SHOP_FONT.render(self.text, 0, text_col)
         self.width = max(width, self.text_surface.get_width() + padding)
         self.height = max(height, self.text_surface.get_height() + padding)
         

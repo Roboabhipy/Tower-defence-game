@@ -1,4 +1,5 @@
 import pygame
+import sys
 pygame.init()
 pygame.font.init()
 
@@ -10,6 +11,7 @@ GRID_WIDTH, GRID_HEIGHT = 50, 50
 FPS = 60
 
 FONT = pygame.font.Font(None, 32)
+SHOP_FONT = pygame.font.SysFont("PressStart2P-Regular", 24)
 
 MAP_COR = [
     (50, 150), (50, 200), (50, 250), (50, 300), (50, 350), (50, 400),

@@ -85,6 +85,7 @@ def load_sprite_sheets(dir1, dir2, width, height, loop_size, only_flip="All"):
         ])
 
         all_sprites = {}
+        # Loads the entire strip of sprites
         for image in images:
             base_name = os.path.splitext(image)[0]
             sprite_sheet = pygame.image.load(
@@ -93,7 +94,7 @@ def load_sprite_sheets(dir1, dir2, width, height, loop_size, only_flip="All"):
             sheet_height = sprite_sheet.get_height()
 
             sprites = []
-
+            # Splits the spritesheet strip loaded earlier into individual images to cycle through
             for y in range(0, sheet_height, loop_size):
                 for x in range(0, sheet_width, loop_size):
                     surface = pygame.Surface(
