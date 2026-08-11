@@ -115,6 +115,7 @@ def main():
         mouse_pos = pygame.mouse.get_pos()
         keys = pygame.key.get_pressed()
         mouse_grid_pos = get_mouse_grid_pos(mouse_pos)
+        in_range = main_player.check_range(mouse_grid_pos)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -136,8 +137,7 @@ def main():
                     selected_type, block_selected, block_colour, display_range)
 
                 if not clicked_button:
-                    # in_range = main_player.check_range(mouse_grid_pos)
-                    in_range = True
+                    # in_range = True
                     if in_range:
                         waypoints = False
 
@@ -166,7 +166,7 @@ def main():
 
         allymanager.update(last_frame, enemymanager.enemies)
 
-        placementpreview.loop(mouse_pos)
+        placementpreview.loop(mouse_pos, coins, in_range)
 
         uimanager.loop(mouse_pos, coins)
 
