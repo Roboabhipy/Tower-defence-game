@@ -1,6 +1,5 @@
 import math
 import Data.constants as constants
-from Entities.mapcreator import Map
 import pygame
 import os
 
@@ -124,7 +123,7 @@ def flip(sprites):
     return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
 
-def create_grid(rows):
+def create_grid(rows, map_obj):
     grid = []
     path_positions = {
         (x // constants.GRID_WIDTH, y // constants.GRID_HEIGHT)
@@ -134,7 +133,7 @@ def create_grid(rows):
     for row in range(rows):
         grid.append([])
         for col in range(rows):
-            spot = Map(col, row, "dark green")
+            spot = map_obj(col, row, "dark green")
             if (col, row) in path_positions:
                 spot.make_path()
             grid[row].append(spot)

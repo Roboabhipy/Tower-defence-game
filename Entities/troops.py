@@ -29,6 +29,8 @@ class Troops():
         self.animation_count = 0
         self.sprite_image = load_sprite_sheets(
             "Assets", sprite, width*1.5, height*1.5, sprite_sheet_size, only_flip)
+        # Hardcoded just in case troop is created after loop function has been called
+        self.sprite = self.sprite_image["idle_left"][0]
         self.has_directions = has_direction
         self.animation_delay = 3
         self.attacking = False
@@ -146,7 +148,7 @@ class Troops():
         self.attacking = False
 
     def draw(self):
-#         pygame.draw.rect(constants.WIN, self.colour, self.rect)
+        #         pygame.draw.rect(constants.WIN, self.colour, self.rect)
         sprite_surface_rect = self.sprite.get_rect()
         sprite_surface_rect.center = self.rect.center
         constants.WIN.blit(self.sprite, sprite_surface_rect)

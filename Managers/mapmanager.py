@@ -10,7 +10,7 @@ from Entities.base import Base
 class MapManager:
     def __init__(self):
         self.occupied_grids = create_grid(
-            constants.WIDTH // constants.GRID_WIDTH)
+            constants.WIDTH // constants.GRID_WIDTH, Map)
 
         self.blocks = []
         self.turrets = []

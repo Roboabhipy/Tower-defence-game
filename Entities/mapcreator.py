@@ -1,5 +1,15 @@
 import Data.constants as constants
+from Utils.UtilityFunction import load_image
 import pygame
+import os
+import random
+
+tile_images = {}
+
+for image in os.listdir("Assets/Tiles"):
+    name_without_ext, ext = os.path.splitext(image)
+    tile_images[name_without_ext] = load_image(
+        f"Tiles\{name_without_ext}", constants.GRID_WIDTH, constants.GRID_HEIGHT, 0)
 
 
 class Map():
@@ -11,6 +21,8 @@ class Map():
         self.rect = pygame.Rect(
             self.x, self.y, constants.GRID_WIDTH, constants.GRID_HEIGHT)
         self.colour = colour
+        self.image = tile_images["grass"]
+        self.path_tile_keys = [key for key in tile_images.keys() if key.startswith("FieldsTile_")]
         self.type = type
         self.path = "Open"  # Says if the shortest path exists using this path block
         self.neighbours = []  # All path blocks in 4 directions not diagonal
@@ -18,6 +30,7 @@ class Map():
     def make_path(self):
         self.type = "Path"
         self.colour = "brown"
+        self.image = tile_images[random.choice(self.path_tile_keys)]
 
     def make_obstacle(self):
         self.type = "Obstacle"
@@ -61,4 +74,5 @@ class Map():
         return False
 
     def draw(self):
-        pygame.draw.rect(constants.WIN, self.colour, self.rect)
+        constants.WIN.blit(self.image, (self.rect.x, self.rect.y))
+        # pygame.draw.rect(constants.WIN, self.colour, self.rect)
