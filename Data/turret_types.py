@@ -1,40 +1,41 @@
 turret_data = {
+    # Tower
     6: {"width": 40,
         "height": 40,
-        "colour": "red",
+        "image": "machinegun",
         "damage": 5,
-        "range": 3,
+        "turret_range": 3,
         "velocity": 7,
         "frequency": 500,
         "price": 50,
         },
-
+    # Rapid
     7: {"width": 30,
         "height": 30,
-        "colour": "red",
+        "image": "machinegun",
         "damage": 3,
-        "range": 3,
+        "turret_range": 3,
         "velocity": 9,
         "frequency": 200,
         "price": 100,
 
         },
-
+    # Cannon
     8: {"width": 50,
         "height": 50,
-        "colour": "red",
+        "image": "cannon",
         "damage": 15,
-        "range": 3.5,
+        "turret_range": 3.5,
         "velocity": 4,
         "frequency": 900,
         "price": 350,
         },
-
+    # Sniper
     9: {"width": 45,
         "height": 45,
-        "colour": "red",
+        "image": "sniper_rifle",
         "damage": 10,
-        "range": 8,
+        "turret_range": 8,
         "velocity": 10,
         "frequency": 750,
         "price": 250,

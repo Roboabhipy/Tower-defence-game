@@ -6,11 +6,14 @@ from Entities.bullets import Bullets
 
 
 class Turrets():
-    def __init__(self, x, y, width, height, colour, damage, range, velocity, frequency, price):
+    def __init__(self, x, y, width, height, image, damage, turret_range, velocity, frequency, price):
         self.rect = pygame.Rect(x, y, width, height)
-        self.colour = colour
+        self.images = []
+        for angle in range(0, 359):
+            self.images.append(UtilityFunction.load_image(
+                image, width*1.2, height*1.2, angle))
         self.attack = damage
-        self.range = range*constants.GRID_WIDTH
+        self.range = turret_range*constants.GRID_WIDTH
         self.vel = velocity
         self.bullets = []
         self.last_shot = 0
@@ -59,6 +62,7 @@ class Turrets():
                 self.bullets.remove(bullet)
 
     def draw(self, enemies):
+        pygame.draw.rect(constants.WIN, "red", self.rect)
         target_pos = (0, 0)
         for enemy in enemies:
             target_pos = self.check_range(enemy)
@@ -71,13 +75,19 @@ class Turrets():
         for bullet in self.bullets:
             bullet.draw()
 
-        pygame.draw.circle(constants.WIN, self.colour,
-                           self.rect.center, self.rect.width / 3)
+        # pygame.draw.circle(constants.WIN, self.colour,
+            #    self.rect.center, self.rect.width / 3)
 
-        rotate = UtilityFunction.get_angle(
-            self.rect.center, (target_pos)) + 180
+        angle = int(UtilityFunction.get_angle(
+            self.rect.center, (target_pos))) % 359
 
-        end_point = UtilityFunction.move_at_angle(rotate, 19)
+        image = self.images[angle]
 
-        pygame.draw.line(constants.WIN, "white", self.rect.center,
-                         (self.rect.centerx - end_point[0], self.rect.centery - end_point[1]), 1)
+        turret_surface_rect = image.get_rect()
+        turret_surface_rect.center = self.rect.center
+        constants.WIN.blit(image, turret_surface_rect)
+
+        # end_point = UtilityFunction.move_at_angle(rotate, 19)
+
+        # pygame.draw.line(constants.WIN, "white", self.rect.center,
+        #  (self.rect.centerx - end_point[0], self.rect.centery - end_point[1]), 1)

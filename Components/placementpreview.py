@@ -26,7 +26,7 @@ class PlacementPreview():
         self.type = obj_type
 
         if self.display_range:
-            self.display_range = turret_data[block_selected]["range"]
+            self.display_range = turret_data[block_selected]["turret_range"]
             self.current_obj_price = turret_data[block_selected]["price"]
             self.range_surface = pygame.Surface(
                 (constants.GRID_WIDTH*self.display_range*2, constants.GRID_HEIGHT*self.display_range*2), pygame.SRCALPHA)

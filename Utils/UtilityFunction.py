@@ -11,7 +11,7 @@ def load_image(image, width, height, rotate):
     key = (image, width, height, rotate)
     if key not in image_cache:
         loading_image = pygame.image.load(
-            os.path.join('Assets', image + ".png"))
+            os.path.join('Assets', image + ".png")).convert_alpha()
 
         if rotate != 0:
             loaded_image = pygame.transform.rotate(
