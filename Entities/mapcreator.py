@@ -24,6 +24,8 @@ class Map():
         self.image = tile_images["grass"]
         self.path_tile_keys = [key for key in tile_images.keys() if key.startswith("FieldsTile_")]
         self.type = type
+        if self.type == "Path":
+            self.make_path()
         self.path = "Open"  # Says if the shortest path exists using this path block
         self.neighbours = []  # All path blocks in 4 directions not diagonal
 
