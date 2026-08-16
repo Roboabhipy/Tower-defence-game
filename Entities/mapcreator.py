@@ -13,20 +13,24 @@ for image in os.listdir("Assets/Blocks"):
 
 
 class Map():
-    def __init__(self, col, row, type="Obstacle"):
+    def __init__(self, col, row, type="Obstacle", name=None, image=None, price=None, health=None):
         self.row = row
         self.col = col
         self.x = col * constants.GRID_WIDTH  # Column
         self.y = row * constants.GRID_HEIGHT  # Row
+
         self.rect = pygame.Rect(
             self.x, self.y, constants.GRID_WIDTH, constants.GRID_HEIGHT)
         self.image = tile_images["grass"]
+
         self.path_tile_keys = [key for key in tile_images.keys() if key.startswith("FieldsTile_")]
         self.type = type
-        if self.type == "Path":
-            self.make_path()
+
         self.path = "Open"  # Says if the shortest path exists using this path block
         self.neighbours = []  # All path blocks in 4 directions not diagonal
+
+        if self.type == "Path":
+            self.make_path()
 
     def make_path(self):
         self.type = "Path"

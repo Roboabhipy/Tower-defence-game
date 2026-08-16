@@ -2,8 +2,8 @@ block_data = {
     2: {
         "name": "Grass Barrier",
         "image": "grass_barrier",
-        "type": "Barrier",
-        "price": 50
+        "price": 50,
+        "health": 20
     },
     3: {
         "name": "Path",
@@ -15,15 +15,15 @@ block_data = {
     4: {
         "name": "Wooden Barrier",
         "image": "wooden_barrier",
-        "type": "Barrier",
-        "price": 200
+        "price": 200,
+        "health": 50
     },
 
     5: {
         "name": "Steel Barrier",
         "image": "steel_barrier",
-        "type": "Barrier",
-        "price": 500
+        "price": 500,
+        "health": 100
     },
 
 }

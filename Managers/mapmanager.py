@@ -1,10 +1,14 @@
 import Data.constants as constants
-import Utils.pathfinder as pathfinder
+from Data.turret_types import turret_data
+from Data.block_types import block_data
+
+from Entities.base import Base
 from Entities.mapcreator import Map
 from Entities.turrets import Turrets
-from Data.turret_types import turret_data
+from Entities.barrier import Barrier
+
+import Utils.pathfinder as pathfinder
 from Utils.UtilityFunction import create_grid
-from Entities.base import Base
 
 
 class MapManager:
@@ -14,6 +18,7 @@ class MapManager:
 
         self.blocks = []
         self.turrets = []
+        self.barriers = []
 
         self.home_base = Base(950, 650, 50, 50, "blue", 300)
         self.enemy_base = Base(50, 100, 50, 50, "red", 300)
@@ -21,11 +26,11 @@ class MapManager:
         self.current_waypoints = self.create_waypoint(
             self.enemy_base.rect.center, (self.home_base.rect.x, self.home_base.rect.centery), None)
 
-        self.block_placers = {
-            2: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "green"),
-            3: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "brown", "Path"),
-            4: lambda pos: Map(pos[0] // constants.GRID_WIDTH, pos[1] // constants.GRID_HEIGHT, "red")
-        }
+        self.block_placers = lambda pos, id: Map(
+            pos[0]//constants.GRID_WIDTH, pos[1]//constants.GRID_HEIGHT, **block_data[id])
+
+        self.barrier_placer = lambda pos, id: Barrier(
+            pos[0], pos[1], block_data[id]["image"], block_data[id]["health"])
 
         self.turret_placers = lambda pos, id: Turrets(
             pos[0], pos[1], **turret_data[id])
@@ -45,36 +50,48 @@ class MapManager:
         spent_coins = 0
         turret_obj = None
         obj = Map(
-            clicked_column, clicked_row, "dark green")
+            clicked_column, clicked_row)
 
         clicked_obj = self.occupied_grids[clicked_row][clicked_column]
 
         if clicked_obj.type in ("Start", "End"):
             return spent_coins, False
 
-        if block_selected in self.block_placers:
-            obj = self.block_placers[block_selected](mouse_pos)
+        if block_selected in block_data:
+            block_price = block_data[block_selected]["price"]
+
+            if coins >= block_price:
+                obj = self.block_placers(mouse_pos, block_selected)
+                not_barrier = True
+
+                if obj.type != "Path":
+                    not_barrier = False
+                    barrier_obj = self.barrier_placer(
+                        mouse_pos, block_selected)
+                    self.barriers.append(barrier_obj)
+                if not_barrier:
+                    self.occupied_grids[clicked_row][clicked_column] = obj
 
         elif block_selected in turret_data:
             turret_price = turret_data[block_selected]["price"]
             if coins >= turret_price:
                 turret_obj = self.turret_placers(mouse_pos, block_selected)
 
-        new_waypoints = self.is_valid_placement(
-            clicked_row, clicked_column, obj)
+            new_waypoints = self.is_valid_placement(
+                clicked_row, clicked_column, obj)
 
-        if new_waypoints:
-            self.occupied_grids[clicked_row][clicked_column] = obj
-            if turret_obj:
-                self.replace_obj(mouse_pos)
-                spent_coins += turret_price
-                self.turrets.append(turret_obj)
+            if new_waypoints:
+                self.occupied_grids[clicked_row][clicked_column] = obj
+                if turret_obj:
+                    self.replace_obj(mouse_pos)
+                    spent_coins += turret_price
+                    self.turrets.append(turret_obj)
 
-            path_changed = new_waypoints != self.current_waypoints
+                path_changed = new_waypoints != self.current_waypoints
 
-            if path_changed:
-                self.current_waypoints = new_waypoints
-                return spent_coins, new_waypoints
+                if path_changed:
+                    self.current_waypoints = new_waypoints
+                    return spent_coins, new_waypoints
 
         return spent_coins, False
 
@@ -101,7 +118,7 @@ class MapManager:
                 break
 
         obj = Map(
-            clicked_column, clicked_row, "dark green")
+            clicked_column, clicked_row)
         new_waypoints = self.is_valid_placement(
             clicked_row, clicked_column, obj)
 
@@ -143,6 +160,9 @@ class MapManager:
         for list in self.occupied_grids:
             for obj in list:
                 obj.draw()
+
+        for barrier in self.barriers:
+            barrier.draw()
 
         self.home_base.draw()
         self.enemy_base.draw()
