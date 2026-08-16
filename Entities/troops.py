@@ -72,6 +72,20 @@ class Troops():
         self.vx = dx * self.vel
         self.vy = dy * self.vel
 
+        # Move enemy so the center of the rectangle follows the waypoint path
+        self.rect.centerx += self.vx
+        self.rect.centery += self.vy
+        self.health_rect.move(self.vx, self.vy)
+
+    def handle_sprite_direction(self):
+        self.sprite_sheet = "idle"
+        if self.hit_count <= 500:
+            self.sprite_sheet = "hit"
+        elif self.attack_animation_count >= 500:
+            self.sprite_sheet = "attack"
+        elif self.vx != 0 or self.vy != 0:
+            self.sprite_sheet = "run"
+
         if self.vx > 0 and self.direction != "right":
             self.direction = "right"
             self.animation_count = 0
@@ -88,30 +102,16 @@ class Troops():
             self.direction = "up"
             self.animation_count = 0
 
-        elif self.vx == 0 and self.direction != "right":
+        elif self.vx == 0 and self.vy == 0 and self.direction != "right":
             self.direction = "right"
             self.animation_count = 0
 
-        # Move enemy so the center of the rectangle follows the waypoint path
-        self.rect.centerx += self.vx
-        self.rect.centery += self.vy
-        self.health_rect.move(self.vx, self.vy)
-
     def update_sprite(self):
-        self.sprite_sheet = "idle"
-        if self.hit_count <= 500:
-            self.sprite_sheet = "hit"
-        elif self.attack_animation_count >= 500:
-            self.sprite_sheet = "attack"
-        elif self.vx != 0 or self.vy != 0:
-            self.sprite_sheet = "run"
-
         sprite_sheet_name = self.sprite_sheet + "_" + self.direction
         sprites = self.sprite_image[sprite_sheet_name]
         sprite_index = (self.animation_count //
                         self.animation_delay) % len(sprites)
         self.sprite = sprites[sprite_index]
-        print(sprite_sheet_name)
         self.sprite.get_rect().center = self.rect.center
         self.animation_count += 1
 
@@ -145,6 +145,7 @@ class Troops():
 
         self.hit_count += last_frame
 
+        self.handle_sprite_direction()
         self.update_sprite()
         self.attacking = False
 
