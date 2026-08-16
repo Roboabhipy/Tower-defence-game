@@ -17,7 +17,8 @@ add_items(block_data, build_data)
 add_items(turret_data, build_data)
 build_data[1] = {"text": "Delete",
                  "function": 1,
-                 "price": 0}
+                 "price": None
+                 }
 add_items(ally_data, troop_data)
 
 # build_data = {

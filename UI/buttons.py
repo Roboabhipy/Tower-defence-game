@@ -16,10 +16,6 @@ class Buttons():
         self.text_surface = constants.SHOP_FONT.render(self.text, 0, text_col)
         self.width = max(width, self.text_surface.get_width() + padding)
         self.height = max(height, self.text_surface.get_height() + padding)
-        
-        if self.price != None:
-            self.price_surface = constants.FONT.render(
-            str(self.price), True, self.colour)
 
         self.base_rect = pygame.Rect(0, 0, self.width, self.height)
         self.base_rect.center = center
@@ -27,11 +23,16 @@ class Buttons():
         self.scale = 1
         self.target_scale = 1
         self.animation_speed = 0.1
+        if self.price != None:
+            self.price_surface = constants.FONT.render(
+                str(self.price), True, (255, 255, 255))
+            self.price_surface_pos = (self.base_rect.x -
+                                      self.price_surface.get_width() - 10, self.base_rect.centery - self.price_surface.get_height()/2)
 
     def mouse_detection(self, mouse_pos, coins):
         self.colour = self.original_button_colour
         self.scale += (self.target_scale - self.scale)*self.animation_speed
-        
+
         if not self.base_rect.collidepoint(mouse_pos):
             self.target_scale = 1
             return
@@ -66,5 +67,4 @@ class Buttons():
                            self.text_surface.get_width()/2, self.base_rect.centery - self.text_surface.get_height() / 2))
 
         if self.target_scale != 1 and self.price != None:
-            constants.WIN.blit(self.price_surface, (self.base_rect.centerx -
-                                                    self.text_surface.get_width()/2, scaled_rect.bottom + 10))
+            constants.WIN.blit(self.price_surface, self.price_surface_pos)

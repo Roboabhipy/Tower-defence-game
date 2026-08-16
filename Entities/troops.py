@@ -6,7 +6,7 @@ from Utils.UtilityFunction import load_sprite_sheets
 
 
 class Troops():
-    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, sprite, sprite_sheet_size, only_flip="All", has_direction=False, loot=False, price=False):
+    def __init__(self, x, y, target_base, waypoints, width, height, colour, health, attack, velocity, sprite, sprite_sheet_size, only_flip="All", has_direction=False, loot=False, price=False, name=None):
         self.rect = pygame.Rect(x, y, width, height)
         self.health_rect = Health(
             self.rect.centerx-15, self.rect.y - 15, 30, 5, health, health)
