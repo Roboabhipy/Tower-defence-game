@@ -56,7 +56,7 @@ class Troops():
         dist = math.hypot(dx, dy)
 
         # If close enough, snap to the waypoint and move to the next one
-        if dist <= max(2, self.vel / 2):
+        if dist <= max(5, self.vel / 2):
             self.rect.centerx = wx
             self.rect.centery = wy
             self.health_rect.rect.x = self.rect.centerx - 15
