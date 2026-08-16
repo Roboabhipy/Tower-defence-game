@@ -78,12 +78,3 @@ class PlacementPreview():
 
         if self.image != None:
             self.surface.blit(self.image, (0, 0))
-
-        # if self.type == "Turret":
-        #     pygame.draw.circle(self.surface, (255, 0, 0, 75),
-        #                        self.surface_rect.center, self.surface.get_width()/3)
-        #     pygame.draw.line(self.surface, (255, 255, 255, 180),
-        #                      self.surface_rect.center, (self.surface_rect.centerx, 0))
-
-        # elif self.type == "Block":
-        #     constants.WIN.blit(self.surface, (self.x, self.y))
