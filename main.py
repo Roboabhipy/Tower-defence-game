@@ -49,23 +49,24 @@ def turret_loop(turrets, last_frame, enemies):
 def get_type(block_selected):
     selected_type = None
     display_range = False
-    colour = False
+    image = None
 
     if block_selected == 1:
         selected_type = "Delete"
 
     if block_selected in block_data:
         selected_type = "Block"
-        colour = block_data[block_selected]["colour"]
+        image = block_data[block_selected]["image"]
 
     elif block_selected in turret_data:
         selected_type = "Turret"
         display_range = True
+        image = turret_data[block_selected]["image"]
 
     elif block_selected in ally_data:
         selected_type = "Ally"
 
-    return selected_type, display_range, colour
+    return selected_type, display_range, image
 
 
 def draw(grid_surface, mapmanager, player, enemies, uimanager, coins, allymanager, placementpreview):
@@ -131,10 +132,10 @@ def main():
                 block_selected, clicked_button = uimanager.get_function(
                     mouse_pos)
 
-                selected_type, display_range, block_colour = get_type(
+                selected_type, display_range, image = get_type(
                     block_selected)
                 placementpreview.create_translucent_obj(
-                    selected_type, block_selected, block_colour, display_range)
+                    selected_type, block_selected, image, display_range)
 
                 if not clicked_button:
                     # in_range = True

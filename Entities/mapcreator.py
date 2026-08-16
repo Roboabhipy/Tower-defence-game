@@ -6,14 +6,14 @@ import random
 
 tile_images = {}
 
-for image in os.listdir("Assets/Tiles"):
+for image in os.listdir("Assets/Blocks"):
     name_without_ext, ext = os.path.splitext(image)
     tile_images[name_without_ext] = load_image(
-        f"Tiles\{name_without_ext}", constants.GRID_WIDTH, constants.GRID_HEIGHT, 0)
+        f"Blocks\{name_without_ext}", constants.GRID_WIDTH, constants.GRID_HEIGHT, 0)
 
 
 class Map():
-    def __init__(self, col, row, colour, type="Obstacle"):
+    def __init__(self, col, row, type="Obstacle"):
         self.row = row
         self.col = col
         self.x = col * constants.GRID_WIDTH  # Column

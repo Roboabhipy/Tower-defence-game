@@ -1,13 +1,29 @@
 block_data = {
     2: {
-        "colour": (0, 255, 0)
+        "name": "Grass Barrier",
+        "image": "grass_barrier",
+        "type": "Barrier",
+        "price": 50
     },
     3: {
-        "colour": (165, 42, 42),
-        "type": "Path"
+        "name": "Path",
+        "image": "FieldsTile_01",
+        "type": "Path",
+        "price": 100
     },
 
     4: {
-        "colour": (255, 0, 0)
-    }
+        "name": "Wooden Barrier",
+        "image": "wooden_barrier",
+        "type": "Barrier",
+        "price": 200
+    },
+
+    5: {
+        "name": "Steel Barrier",
+        "image": "steel_barrier",
+        "type": "Barrier",
+        "price": 500
+    },
+
 }

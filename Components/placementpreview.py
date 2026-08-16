@@ -3,6 +3,8 @@ import pygame
 import Data.constants as constants
 from Data.turret_types import turret_data
 
+from Utils.UtilityFunction import load_image
+
 TRANSPERANT_MOUSE_RECT = pygame.Surface(
     (constants.GRID_WIDTH, constants.GRID_HEIGHT), pygame.SRCALPHA)
 TRANSPERANT_MOUSE_RECT.fill((255, 255, 255, 75))
@@ -19,11 +21,13 @@ class PlacementPreview():
         self.range_surface_colour = (255, 255, 255, 75)
         self.current_obj_price = 0
         self.surface_rect = self.surface.get_rect()
+        self.image = None
 
-    def create_translucent_obj(self, obj_type, block_selected, colour=False, display_range=False):
+    def create_translucent_obj(self, obj_type, block_selected, image=None, display_range=False):
         self.surface = TRANSPERANT_MOUSE_RECT
         self.display_range = display_range
         self.type = obj_type
+        self.image = image
 
         if self.display_range:
             self.display_range = turret_data[block_selected]["turret_range"]
@@ -35,11 +39,14 @@ class PlacementPreview():
             turret_type = turret_data[block_selected]
             self.surface = pygame.Surface(
                 (turret_type["width"], turret_type["height"]), pygame.SRCALPHA)
+            self.image = load_image(
+                image, turret_type["width"], turret_type["height"], 0)
 
         elif self.type == "Block":
             self.surface = pygame.Surface(
                 (constants.GRID_WIDTH, constants.GRID_HEIGHT), pygame.SRCALPHA)
-            self.surface.fill((colour[0], colour[1], colour[2], 75))
+            self.image = load_image(
+                (f"Blocks/{image}"), constants.GRID_WIDTH, constants.GRID_HEIGHT, 0)
 
         self.surface_rect = self.surface.get_rect()
 
@@ -69,14 +76,14 @@ class PlacementPreview():
             pygame.draw.circle(self.range_surface, self.range_surface_colour,
                                self.range_surface.get_rect().center, self.range_surface.get_width()/2)
 
-        if self.type == "Turret":
-            pygame.draw.circle(self.surface, (255, 0, 0, 75),
-                               self.surface_rect.center, self.surface.get_width()/3)
-            pygame.draw.line(self.surface, (255, 255, 255, 180),
-                             self.surface_rect.center, (self.surface_rect.centerx, 0))
+        if self.image != None:
+            self.surface.blit(self.image, (0, 0))
 
-        elif self.type == "Block":
-            constants.WIN.blit(self.surface, (self.x, self.y))
+        # if self.type == "Turret":
+        #     pygame.draw.circle(self.surface, (255, 0, 0, 75),
+        #                        self.surface_rect.center, self.surface.get_width()/3)
+        #     pygame.draw.line(self.surface, (255, 255, 255, 180),
+        #                      self.surface_rect.center, (self.surface_rect.centerx, 0))
 
-        # pygame.draw.rect(constants.WIN, "black", (self.x, self.y,
-        #                  self.surface.get_width(), self.surface.get_height()), 4)
+        # elif self.type == "Block":
+        #     constants.WIN.blit(self.surface, (self.x, self.y))

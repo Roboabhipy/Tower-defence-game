@@ -133,7 +133,7 @@ def create_grid(rows, map_obj):
     for row in range(rows):
         grid.append([])
         for col in range(rows):
-            spot = map_obj(col, row, "dark green")
+            spot = map_obj(col, row)
             if (col, row) in path_positions:
                 spot.make_path()
             grid[row].append(spot)
