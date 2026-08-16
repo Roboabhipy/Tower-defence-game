@@ -109,8 +109,7 @@ class MapManager:
             for grid in self.occupied_grids[:]:
                 for block in grid:
                     if (block.rect.x, block.rect.y) == mouse_pos and block.type not in ("Start", "End"):
-                        block.type = "Obstacle"
-                        block.colour = "dark green"
+                        block.make_obstacle()
                         break
 
         return coins_earned

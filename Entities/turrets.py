@@ -62,7 +62,7 @@ class Turrets():
                 self.bullets.remove(bullet)
 
     def draw(self, enemies):
-        pygame.draw.rect(constants.WIN, "red", self.rect)
+        # pygame.draw.rect(constants.WIN, "red", self.rect)
         target_pos = (0, 0)
         for enemy in enemies:
             target_pos = self.check_range(enemy)
@@ -78,9 +78,8 @@ class Turrets():
         # pygame.draw.circle(constants.WIN, self.colour,
             #    self.rect.center, self.rect.width / 3)
 
-        angle = int(UtilityFunction.get_angle(
-            self.rect.center, (target_pos))) % 359
-
+        angle = -int(UtilityFunction.get_angle(
+            target_pos, self.rect.center)-90) % 359
         image = self.images[angle]
 
         turret_surface_rect = image.get_rect()

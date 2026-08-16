@@ -111,6 +111,7 @@ class Troops():
         sprite_index = (self.animation_count //
                         self.animation_delay) % len(sprites)
         self.sprite = sprites[sprite_index]
+        print(sprite_sheet_name)
         self.sprite.get_rect().center = self.rect.center
         self.animation_count += 1
 
